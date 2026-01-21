@@ -143,214 +143,6 @@
     .loader-progress-bar { height: 100%; background: linear-gradient(90deg, #FF6B35, #FF8F6B); border-radius: 2px; transition: width 0.5s ease; width: 0%; }
 
     /* ============================================= */
-    /* NEW FLOW - Stylish Animated Experience       */
-    /* ============================================= */
-
-    /* Wizard intro animation */
-    .wizard-intro { text-align: center; padding: 20px 0 40px; }
-    .wizard-mascot {
-      width: 80px; height: 80px;
-      background: linear-gradient(135deg, #FF6B35, #FF8B5E);
-      border-radius: 24px;
-      display: flex; align-items: center; justify-content: center;
-      margin: 0 auto 24px;
-      font-size: 40px; font-weight: 800;
-      animation: mascotFloat 3s ease-in-out infinite;
-      box-shadow: 0 20px 60px rgba(255, 107, 53, 0.3);
-    }
-    @keyframes mascotFloat {
-      0%, 100% { transform: translateY(0) rotate(0deg); }
-      50% { transform: translateY(-10px) rotate(3deg); }
-    }
-    .wizard-title { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
-    .wizard-subtitle { color: rgba(255,255,255,0.5); font-size: 15px; }
-
-    /* Choice cards - big stylish buttons */
-    .choice-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 600px; margin: 0 auto; }
-    @media (max-width: 600px) { .choice-cards { grid-template-columns: 1fr; } }
-
-    .choice-card {
-      background: rgba(255,255,255,0.02);
-      border: 2px solid rgba(255,255,255,0.08);
-      border-radius: 24px;
-      padding: 32px 24px;
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-      position: relative;
-      overflow: hidden;
-    }
-    .choice-card::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(circle at 50% 0%, var(--card-glow, transparent) 0%, transparent 70%);
-      opacity: 0;
-      transition: opacity 0.4s;
-    }
-    .choice-card:hover {
-      transform: translateY(-8px) scale(1.02);
-      border-color: var(--card-border, rgba(255,255,255,0.2));
-      box-shadow: 0 20px 60px var(--card-shadow, rgba(0,0,0,0.3));
-    }
-    .choice-card:hover::before { opacity: 1; }
-    .choice-card.orange { --card-glow: rgba(255,107,53,0.15); --card-border: rgba(255,107,53,0.4); --card-shadow: rgba(255,107,53,0.2); }
-    .choice-card.purple { --card-glow: rgba(168,85,247,0.15); --card-border: rgba(168,85,247,0.4); --card-shadow: rgba(168,85,247,0.2); }
-
-    .choice-icon {
-      width: 72px; height: 72px;
-      border-radius: 20px;
-      display: flex; align-items: center; justify-content: center;
-      margin: 0 auto 20px;
-      font-size: 32px;
-      transition: transform 0.3s;
-    }
-    .choice-card:hover .choice-icon { transform: scale(1.1) rotate(-5deg); }
-    .choice-icon.orange { background: linear-gradient(135deg, rgba(255,107,53,0.2), rgba(255,107,53,0.05)); color: #FF8B5E; }
-    .choice-icon.purple { background: linear-gradient(135deg, rgba(168,85,247,0.2), rgba(168,85,247,0.05)); color: #A78BFA; }
-
-    .choice-title { font-size: 18px; font-weight: 600; margin-bottom: 8px; }
-    .choice-desc { font-size: 13px; color: rgba(255,255,255,0.4); line-height: 1.5; }
-
-    /* Building animation for config preview */
-    .building-container { position: relative; padding: 40px 0; }
-    .building-progress {
-      display: flex; align-items: center; justify-content: center; gap: 16px;
-      margin-bottom: 40px;
-    }
-    .building-step {
-      display: flex; flex-direction: column; align-items: center; gap: 8px;
-    }
-    .building-dot {
-      width: 40px; height: 40px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.05);
-      border: 2px solid rgba(255,255,255,0.1);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 16px;
-      transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    .building-step.active .building-dot {
-      background: rgba(255,107,53,0.15);
-      border-color: #FF6B35;
-      color: #FF6B35;
-      animation: buildPulse 1.5s ease-in-out infinite;
-    }
-    .building-step.done .building-dot {
-      background: rgba(34,197,94,0.15);
-      border-color: #22C55E;
-      color: #22C55E;
-    }
-    @keyframes buildPulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(255,107,53,0.4); } 50% { box-shadow: 0 0 0 12px rgba(255,107,53,0); } }
-    .building-line {
-      width: 60px; height: 2px;
-      background: rgba(255,255,255,0.1);
-      border-radius: 1px;
-      transition: background 0.5s;
-    }
-    .building-line.done { background: linear-gradient(90deg, #22C55E, #4ade80); }
-    .building-label { font-size: 11px; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 0.5px; }
-    .building-step.active .building-label { color: #FF8B5E; }
-    .building-step.done .building-label { color: rgba(255,255,255,0.5); }
-
-    /* Animated preview boxes */
-    .preview-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-    @media (max-width: 700px) { .preview-grid { grid-template-columns: 1fr; } }
-
-    .preview-box {
-      background: rgba(255,255,255,0.02);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 20px;
-      overflow: hidden;
-      opacity: 0;
-      transform: translateY(20px);
-      transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    .preview-box.visible { opacity: 1; transform: translateY(0); }
-    .preview-box-header {
-      padding: 16px 20px;
-      border-bottom: 1px solid rgba(255,255,255,0.06);
-      display: flex; align-items: center; gap: 12px;
-      font-size: 14px; font-weight: 600;
-    }
-    .preview-box-header svg { width: 20px; height: 20px; }
-    .preview-box-content { padding: 20px; }
-
-    /* Excel preview animation */
-    .excel-row {
-      display: flex; gap: 2px; margin-bottom: 2px;
-      opacity: 0; transform: translateX(-20px);
-      animation: rowSlideIn 0.4s ease forwards;
-    }
-    .excel-cell {
-      flex: 1;
-      padding: 8px 12px;
-      background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(255,255,255,0.06);
-      font-size: 11px;
-      text-align: center;
-      min-width: 60px;
-    }
-    .excel-cell.header {
-      background: rgba(15,157,88,0.15);
-      border-color: rgba(15,157,88,0.25);
-      color: #4ade80;
-      font-weight: 600;
-    }
-    @keyframes rowSlideIn { to { opacity: 1; transform: translateX(0); } }
-
-    /* Telegram preview animation */
-    .telegram-preview {
-      background: linear-gradient(135deg, #1a1a2e, #16213e);
-      border-radius: 16px;
-      padding: 16px;
-    }
-    .telegram-bubble {
-      background: rgba(0,136,204,0.15);
-      border: 1px solid rgba(0,136,204,0.25);
-      border-radius: 12px 12px 12px 4px;
-      padding: 14px 16px;
-      max-width: 280px;
-      opacity: 0;
-      transform: scale(0.8) translateY(10px);
-      animation: bubblePop 0.5s ease forwards 0.3s;
-    }
-    @keyframes bubblePop { to { opacity: 1; transform: scale(1) translateY(0); } }
-    .telegram-text { font-size: 13px; line-height: 1.6; color: rgba(255,255,255,0.9); }
-    .telegram-meta { font-size: 10px; color: rgba(255,255,255,0.3); text-align: right; margin-top: 8px; }
-
-    /* Collapsible chat for modifications */
-    .mod-chat-toggle {
-      display: flex; align-items: center; justify-content: center; gap: 8px;
-      padding: 14px 24px;
-      background: rgba(168,85,247,0.1);
-      border: 1px solid rgba(168,85,247,0.2);
-      border-radius: 14px;
-      color: #A78BFA;
-      font-size: 14px; font-weight: 500;
-      cursor: pointer;
-      transition: all 0.3s;
-      margin-top: 20px;
-    }
-    .mod-chat-toggle:hover { background: rgba(168,85,247,0.15); border-color: rgba(168,85,247,0.4); }
-    .mod-chat-panel {
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height 0.4s ease, padding 0.4s ease;
-      background: rgba(255,255,255,0.02);
-      border-radius: 16px;
-      margin-top: 16px;
-    }
-    .mod-chat-panel.open { max-height: 400px; padding: 20px; border: 1px solid rgba(255,255,255,0.08); }
-
-    /* Success confetti effect */
-    .confetti { position: fixed; width: 10px; height: 10px; pointer-events: none; z-index: 9999; }
-    @keyframes confettiFall {
-      0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
-      100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
-    }
-
-    /* ============================================= */
     /* RULE CARDS - Glass Style                     */
     /* ============================================= */
     .rule-card {
@@ -1201,10 +993,8 @@
       <div class="mobile-step" data-step="3"><span>3</span></div>
       <div class="mobile-step-line"></div>
       <div class="mobile-step" data-step="4"><span>4</span></div>
-      <div class="mobile-step-line"></div>
-      <div class="mobile-step" data-step="5"><span>5</span></div>
     </div>
-    <div class="mobile-step-label" id="mobile-step-label">Ta compta</div>
+    <div class="mobile-step-label" id="mobile-step-label">Connexion Google</div>
   </div>
   <div class="flex min-h-screen" style="padding-top: 70px;">
     <aside class="sidebar">
@@ -1213,125 +1003,19 @@
         <div style="font-size: 18px; font-weight: 700; color: white; margin-top: 4px;">Compta Express</div>
       </div>
       <div id="steps-nav">
-        <div class="step-item active" id="step-nav-1"><div class="step-number">1</div><span class="step-label">Ta compta</span></div>
-        <div class="step-item upcoming" id="step-nav-2"><div class="step-number">2</div><span class="step-label">Configuration</span></div>
-        <div class="step-item upcoming" id="step-nav-3"><div class="step-number">3</div><span class="step-label">Google Sheets</span></div>
-        <div class="step-item upcoming" id="step-nav-4"><div class="step-number">4</div><span class="step-label">Paiement</span></div>
-        <div class="step-item upcoming" id="step-nav-5"><div class="step-number">5</div><span class="step-label">Telegram</span></div>
+        <div class="step-item active" id="step-nav-1"><div class="step-number">1</div><span class="step-label">Connexion Google</span></div>
+        <div class="step-item upcoming" id="step-nav-2"><div class="step-number">2</div><span class="step-label">Ton fichier</span></div>
+        <div class="step-item upcoming" id="step-nav-3"><div class="step-number">3</div><span class="step-label">Configuration</span></div>
+        <div class="step-item upcoming" id="step-nav-4"><div class="step-number">4</div><span class="step-label">Telegram</span></div>
       </div>
     </aside>
     <main class="main-content">
       <a href="../../../" class="close-btn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></a>
-      <!-- ÉTAPE 1: Ta compta - Accueil stylé avec IA -->
-      <div class="step-content active" id="step-start">
-        <!-- Intro animée -->
-        <div class="wizard-intro">
-          <div class="wizard-mascot">i</div>
-          <h1 class="wizard-title">Configure ta compta</h1>
-          <p class="wizard-subtitle">En 2 minutes, ton fichier sera pret</p>
-        </div>
-
-        <!-- Deux choix stylés -->
-        <div class="choice-cards">
-          <!-- Option 1: J'ai un fichier -->
-          <div class="choice-card orange" onclick="showFileUpload()">
-            <div class="choice-icon orange">
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                <polyline points="14 2 14 8 20 8"/>
-                <line x1="16" y1="13" x2="8" y2="13"/>
-                <line x1="16" y1="17" x2="8" y2="17"/>
-              </svg>
-            </div>
-            <h3 class="choice-title">J'ai un fichier Excel</h3>
-            <p class="choice-desc">Envoie ton fichier, on l'analyse et on configure tout automatiquement</p>
-          </div>
-
-          <!-- Option 2: Guide-moi -->
-          <div class="choice-card purple" onclick="showAIGuide()">
-            <div class="choice-icon purple">
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="3"/>
-                <path d="M12 2v4m0 12v4m10-10h-4M6 12H2"/>
-                <path d="M18.36 5.64l-2.83 2.83m-8.48 8.48l-2.83 2.83m0-14.14l2.83 2.83m8.48 8.48l2.83 2.83"/>
-              </svg>
-            </div>
-            <h3 class="choice-title">Guide-moi</h3>
-            <p class="choice-desc">Explique-moi ta compta, je configure tout pour toi en discutant</p>
-          </div>
-        </div>
-
-        <!-- Zone d'upload cachée par défaut -->
-        <div id="file-upload-zone" style="display: none; margin-top: 32px; max-width: 500px; margin-left: auto; margin-right: auto;">
-          <div class="glass-card p-6">
-            <div class="flex items-center gap-3 mb-4">
-              <button onclick="hideFileUpload()" style="background: none; border: none; color: rgba(255,255,255,0.4); cursor: pointer; padding: 4px;">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5m7-7l-7 7 7 7"/></svg>
-              </button>
-              <h3 class="text-lg font-semibold">Envoie ton fichier</h3>
-            </div>
-
-            <!-- Drop zone -->
-            <div id="drop-area-new" class="border-2 border-dashed border-white/15 rounded-xl py-10 px-6 text-center transition-all cursor-pointer hover:border-orange-500/40 hover:bg-orange-500/5" onclick="document.getElementById('file-input-new').click()">
-              <div class="w-16 h-16 rounded-full bg-orange-500/10 flex items-center justify-center mx-auto mb-4">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#FF8B5E" stroke-width="1.5">
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                  <polyline points="17 8 12 3 7 8"/>
-                  <line x1="12" y1="3" x2="12" y2="15"/>
-                </svg>
-              </div>
-              <p class="text-white/70 font-medium mb-1">Glisse ton fichier ici</p>
-              <p class="text-white/30 text-sm">ou clique pour parcourir</p>
-              <p class="text-white/20 text-xs mt-3">Excel (.xlsx, .xls) ou CSV</p>
-            </div>
-            <input type="file" id="file-input-new" accept=".xlsx,.xls,.csv" class="hidden" onchange="handleFileUploadNew(event)">
-          </div>
-        </div>
-
-        <!-- Zone IA cachée par défaut -->
-        <div id="ai-guide-zone" style="display: none; margin-top: 32px; max-width: 520px; margin-left: auto; margin-right: auto;">
-          <div class="chat-container">
-            <div class="chat-header">
-              <button onclick="hideAIGuide()" style="background: none; border: none; color: rgba(255,255,255,0.4); cursor: pointer; padding: 4px;">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5m7-7l-7 7 7 7"/></svg>
-              </button>
-              <div class="chat-header-avatar">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><circle cx="12" cy="12" r="3"/><path d="M12 2v4m0 12v4m10-10h-4M6 12H2"/></svg>
-              </div>
-              <div>
-                <div class="font-semibold text-sm">Assistant iArmy</div>
-                <div class="text-xs text-white/40">En ligne</div>
-              </div>
-            </div>
-            <div class="chat-messages" id="wizard-chat-messages">
-              <div class="chat-msg chat-msg-bot">
-                <div class="chat-avatar chat-avatar-bot">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><circle cx="12" cy="12" r="3"/></svg>
-                </div>
-                <div class="chat-bubble chat-bubble-bot">
-                  <p>Explique-moi comment tu fais ta compta aujourd'hui. Par exemple : <strong>"J'ai CB, especes, tickets resto, et je calcule le total"</strong></p>
-                </div>
-              </div>
-            </div>
-            <div class="chat-input-container">
-              <input type="text" class="chat-input" id="wizard-chat-input" placeholder="Decris ta compta..." onkeydown="if(event.key==='Enter')sendWizardMessage()">
-              <button class="chat-send" onclick="sendWizardMessage()">Envoyer</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Petit texte en bas -->
-        <div class="mt-8 flex items-center justify-center gap-2 text-white/20 text-xs">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
-          <span>Tes donnees restent confidentielles</span>
-        </div>
-      </div>
-
-      <!-- ÉTAPE 1b: Autoriser Google Sheets (déplacé après config) -->
-      <div class="step-content" id="step-auth">
-        <div class="mb-2"><span class="text-white/30 text-sm">Etape 3/5</span></div>
+      <!-- ÉTAPE 1a: Autoriser Google Sheets (si pas encore fait) -->
+      <div class="step-content active" id="step-auth">
+        <div class="mb-2"><span class="text-white/30 text-sm">Etape 1/4</span></div>
         <h1 class="text-3xl font-bold mb-3">Connecte Google Sheets</h1>
-        <p class="text-white/40 mb-8">Pour creer ton fichier iArmy dans ton Drive</p>
+        <p class="text-white/40 mb-8">Pour que le bot puisse ecrire dans ton fichier</p>
 
         <div class="glass-card p-8 max-w-lg mx-auto">
           <div class="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-br from-green-500/20 to-green-500/5 flex items-center justify-center mb-6">
@@ -1342,13 +1026,13 @@
             <div class="flex items-start gap-3 text-left">
               <div class="w-6 h-6 rounded-full bg-green-500/20 flex items-center justify-center flex-shrink-0 mt-0.5 text-green-400 text-sm">1</div>
               <div>
-                <p class="text-white/80">On cree ton fichier dans ton Google Drive</p>
+                <p class="text-white/80">Le bot ecrit directement dans ton Google Sheet</p>
               </div>
             </div>
             <div class="flex items-start gap-3 text-left">
               <div class="w-6 h-6 rounded-full bg-green-500/20 flex items-center justify-center flex-shrink-0 mt-0.5 text-green-400 text-sm">2</div>
               <div>
-                <p class="text-white/80">Le bot Telegram ecrit directement dedans</p>
+                <p class="text-white/80">Tes donnees restent privees, sur TON compte</p>
               </div>
             </div>
             <div class="flex items-start gap-3 text-left">
@@ -1359,9 +1043,9 @@
             </div>
           </div>
 
-          <button onclick="connectGoogleAndContinue()" class="btn-glow w-full" style="display: flex; align-items: center; justify-content: center; gap: 10px;">
+          <button onclick="authorizeGoogleSheets()" class="btn-glow w-full" style="display: flex; align-items: center; justify-content: center; gap: 10px;">
             <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#4285F4" d="M44.5 20H24v8.5h11.8C34.7 33.9 30.1 37 24 37c-7.2 0-13-5.8-13-13s5.8-13 13-13c3.1 0 5.9 1.1 8.1 2.9l6.4-6.4C34.6 4.1 29.6 2 24 2 11.8 2 2 11.8 2 24s9.8 22 22 22c11 0 21-8 21-22 0-1.3-.2-2.7-.5-4z"/><path fill="#34A853" d="M6.3 14.7l6.6 4.8C14.1 16.2 18.7 13 24 13c3.1 0 5.9 1.1 8.1 2.9l6.4-6.4C34.6 4.1 29.6 2 24 2 16.1 2 9.3 6.2 6.3 14.7z"/><path fill="#FBBC05" d="M24 46c5.5 0 10.3-2 14.1-5.3l-6.5-5.5C29.5 37 26.9 38 24 38c-6.1 0-11.2-3.9-13.1-9.3l-6.6 5.1C7.3 41.4 15.1 46 24 46z"/><path fill="#EA4335" d="M46.5 20H24v8.5h11.8c-.8 2.4-2.3 4.5-4.3 6l6.5 5.5C41.8 36.5 46 30.9 46 24c0-1.3-.1-2.6-.5-4z"/></svg>
-            Connecter Google
+            Autoriser Google Sheets
           </button>
         </div>
       </div>
@@ -1372,89 +1056,8 @@
         <h1 class="text-3xl font-bold mb-3">Comment veux-tu commencer ?</h1>
         <p class="text-white/40 mb-8">Choisis l'option qui te convient</p>
 
-        <!-- Option 1: Créer mon fichier (RECOMMANDÉ) -->
-        <div class="glass-card p-6 mb-5 max-w-lg mx-auto cursor-pointer hover:border-orange-500/50 transition-all" style="border: 1px solid rgba(255, 107, 53, 0.3); background: linear-gradient(135deg, rgba(255, 107, 53, 0.08), rgba(255, 107, 53, 0.02));" onclick="createEmptyTemplate()">
-          <div class="flex items-center gap-4">
-            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-500/30 to-orange-500/10 flex items-center justify-center text-2xl flex-shrink-0">+</div>
-            <div class="flex-1">
-              <div class="flex items-center gap-2 mb-1">
-                <h3 class="text-lg font-semibold">Creer mon fichier</h3>
-                <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-orange-500/20 text-orange-400 border border-orange-500/30">RECOMMANDE</span>
-              </div>
-              <p class="text-sm text-white/40">On te cree un Google Sheet pret a l'emploi</p>
-            </div>
-            <svg class="w-5 h-5 text-white/30" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
-          </div>
-        </div>
-
-        <!-- Séparateur "ou" -->
-        <div class="flex items-center gap-4 max-w-lg mx-auto my-4">
-          <div class="flex-1 h-px bg-white/10"></div>
-          <span class="text-white/30 text-sm">ou</span>
-          <div class="flex-1 h-px bg-white/10"></div>
-        </div>
-
-        <!-- Option 2: J'ai déjà un fichier -->
-        <div class="glass-card p-6 max-w-lg mx-auto" id="import-dropzone">
-          <div class="flex items-center gap-3 mb-4">
-            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500/20 to-blue-500/5 flex items-center justify-center text-xl">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-            </div>
-            <div><h3 class="text-lg font-semibold">J'ai deja un fichier</h3></div>
-          </div>
-
-          <!-- Google Drive button (prioritaire) -->
-          <button onclick="openSheetsPicker()" class="w-full bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl py-4 px-4 text-sm font-medium transition-all flex items-center gap-3 mb-4">
-            <svg width="28" height="28" viewBox="0 0 87.3 78" xmlns="http://www.w3.org/2000/svg">
-              <path d="m6.6 66.85 3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/>
-              <path d="m43.65 25-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 0 0 -1.2 4.5h27.5z" fill="#00ac47"/>
-              <path d="m73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.502l5.852 11.5z" fill="#ea4335"/>
-              <path d="m43.65 25 13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z" fill="#00832d"/>
-              <path d="m59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z" fill="#2684fc"/>
-              <path d="m73.4 26.5-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/>
-            </svg>
-            <div class="text-left">
-              <div class="font-medium">Choisir depuis Google Drive</div>
-              <div class="text-xs text-white/40">Selectionne un fichier deja en ligne</div>
-            </div>
-          </button>
-
-          <!-- Or separator -->
-          <div class="flex items-center gap-3 mb-4">
-            <div class="flex-1 h-px bg-white/10"></div>
-            <span class="text-white/30 text-xs">ou</span>
-            <div class="flex-1 h-px bg-white/10"></div>
-          </div>
-
-          <!-- Drop zone area (secondaire) - Plus grande pour faciliter le drag & drop -->
-          <div id="drop-area" class="border-2 border-dashed border-white/15 rounded-xl py-8 px-6 text-center transition-all cursor-pointer hover:border-white/30 hover:bg-white/[0.03]" onclick="document.getElementById('file-input').click()">
-            <div class="flex flex-col items-center justify-center gap-3">
-              <div class="w-14 h-14 rounded-full bg-white/5 flex items-center justify-center mb-1">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="text-white/40">
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                  <polyline points="17 8 12 3 7 8"></polyline>
-                  <line x1="12" y1="3" x2="12" y2="15"></line>
-                </svg>
-              </div>
-              <div class="text-center">
-                <p class="text-white/60 text-sm font-medium">Glisse ton fichier Excel ici</p>
-                <p class="text-white/30 text-xs mt-1">ou clique pour parcourir</p>
-              </div>
-            </div>
-          </div>
-
-          <input type="file" id="file-input" accept=".xlsx,.xls,.csv" class="hidden">
-        </div>
-
-        <!-- Séparateur "ou" -->
-        <div class="flex items-center gap-4 max-w-lg mx-auto my-4">
-          <div class="flex-1 h-px bg-white/10"></div>
-          <span class="text-white/30 text-sm">ou</span>
-          <div class="flex-1 h-px bg-white/10"></div>
-        </div>
-
-        <!-- Option 3: Configurer avec l'IA -->
-        <div class="glass-card p-6 max-w-lg mx-auto cursor-pointer hover:border-purple-500/50 transition-all" style="border: 1px solid rgba(168, 85, 247, 0.3); background: linear-gradient(135deg, rgba(168, 85, 247, 0.08), rgba(168, 85, 247, 0.02));" onclick="startAIConversation()">
+        <!-- Option 1: Configurer avec l'IA (RECOMMANDÉ - EN PREMIER) -->
+        <div class="glass-card p-6 mb-5 max-w-lg mx-auto cursor-pointer hover:border-purple-500/50 transition-all" style="border: 1px solid rgba(168, 85, 247, 0.3); background: linear-gradient(135deg, rgba(168, 85, 247, 0.08), rgba(168, 85, 247, 0.02));" onclick="startAIConversation()">
           <div class="flex items-center gap-4">
             <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500/30 to-purple-500/10 flex items-center justify-center text-2xl flex-shrink-0">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1467,11 +1070,65 @@
             <div class="flex-1">
               <div class="flex items-center gap-2 mb-1">
                 <h3 class="text-lg font-semibold">Configurer avec l'IA</h3>
-                <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-purple-500/20 text-purple-400 border border-purple-500/30">NOUVEAU</span>
+                <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-purple-500/20 text-purple-400 border border-purple-500/30">RECOMMANDE</span>
               </div>
-              <p class="text-sm text-white/40">Explique ton workflow, l'IA configure tout pour toi</p>
+              <p class="text-sm text-white/40">Explique ton workflow ou envoie ton Excel, l'IA configure tout</p>
             </div>
             <svg class="w-5 h-5 text-white/30" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
+          </div>
+        </div>
+
+        <!-- Accordéon : Autres options -->
+        <div class="max-w-lg mx-auto mt-6">
+          <button onclick="toggleOtherOptions()" id="other-options-toggle" class="w-full flex items-center justify-between py-3 px-4 text-white/40 hover:text-white/60 transition-all text-sm">
+            <span>Autres options</span>
+            <svg id="other-options-chevron" class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7"/></svg>
+          </button>
+
+          <div id="other-options-content" style="display: none; padding-top: 12px;">
+            <!-- Option 2: Créer mon fichier -->
+            <div class="glass-card p-5 mb-4 cursor-pointer hover:border-orange-500/30 transition-all" style="border: 1px solid rgba(255, 255, 255, 0.08);" onclick="createEmptyTemplate()">
+              <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500/20 to-orange-500/5 flex items-center justify-center text-xl flex-shrink-0">+</div>
+                <div class="flex-1">
+                  <h3 class="text-base font-semibold">Creer un fichier vide</h3>
+                  <p class="text-sm text-white/40">On te cree un Google Sheet de base</p>
+                </div>
+                <svg class="w-4 h-4 text-white/20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
+              </div>
+            </div>
+
+            <!-- Option 3: J'ai déjà un fichier -->
+            <div class="glass-card p-5" id="import-dropzone" style="border: 1px solid rgba(255, 255, 255, 0.08);">
+              <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500/20 to-blue-500/5 flex items-center justify-center text-xl">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                </div>
+                <div><h3 class="text-base font-semibold">J'ai deja un fichier</h3></div>
+              </div>
+
+              <!-- Google Drive button -->
+              <button onclick="openSheetsPicker()" class="w-full bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl py-3 px-4 text-sm font-medium transition-all flex items-center gap-3 mb-3">
+                <svg width="24" height="24" viewBox="0 0 87.3 78" xmlns="http://www.w3.org/2000/svg">
+                  <path d="m6.6 66.85 3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/>
+                  <path d="m43.65 25-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 0 0 -1.2 4.5h27.5z" fill="#00ac47"/>
+                  <path d="m73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.502l5.852 11.5z" fill="#ea4335"/>
+                  <path d="m43.65 25 13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z" fill="#00832d"/>
+                  <path d="m59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z" fill="#2684fc"/>
+                  <path d="m73.4 26.5-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/>
+                </svg>
+                <div class="text-left">
+                  <div class="font-medium text-sm">Depuis Google Drive</div>
+                </div>
+              </button>
+
+              <!-- Drop zone area -->
+              <div id="drop-area" class="border-2 border-dashed border-white/10 rounded-xl py-6 px-4 text-center transition-all cursor-pointer hover:border-white/20 hover:bg-white/[0.02]" onclick="document.getElementById('file-input').click()">
+                <p class="text-white/40 text-sm">Ou glisse ton fichier Excel ici</p>
+              </div>
+
+              <input type="file" id="file-input" accept=".xlsx,.xls,.csv" class="hidden">
+            </div>
           </div>
         </div>
 
@@ -2234,14 +1891,28 @@
       await updateNavBar();
       await checkGoogleSheetsAccess();
 
-      // NEW FLOW: Toujours commencer par step-start (wizard IA)
-      // Google Auth vient APRÈS la configuration
-      document.querySelectorAll('.step-content').forEach(function(c) { c.classList.remove('active'); });
-      document.getElementById('step-start').classList.add('active');
-      updateSidebarStep(1);
+      // Afficher le bon ecran selon l'etat Google Sheets
+      if (hasGoogleSheetsAccess) {
+        showStepChoice();
+      } else {
+        // Step 1 = Connexion Google (pas encore fait)
+        updateSidebarStep(1);
+      }
 
       setupUploadZone();
-      setupNewDropZone(); // Setup new wizard drop zone
+    }
+
+    // Accordéon pour les autres options
+    function toggleOtherOptions() {
+      var content = document.getElementById('other-options-content');
+      var chevron = document.getElementById('other-options-chevron');
+      if (content.style.display === 'none') {
+        content.style.display = 'block';
+        chevron.style.transform = 'rotate(180deg)';
+      } else {
+        content.style.display = 'none';
+        chevron.style.transform = 'rotate(0deg)';
+      }
     }
 
     function showStepChoice() {
@@ -2323,8 +1994,8 @@
           return true;
         }
 
-        // Normal flow - back to step 1 (new wizard flow)
-        goToStep(1);
+        // Normal flow - show choice screen
+        showStepChoice();
         return true;
       } catch (error) { console.error('[COMPTA] ❌', error); hideLoader(); alert('Erreur: ' + error.message); window.history.replaceState({}, document.title, window.location.pathname); return false; }
     }
@@ -2357,6 +2028,261 @@
         if (result.sheets?.length > 0) showSheetsOverlay(result.sheets); else showNoSheetsMessage();
       } catch (error) { console.error('[SHEETS] Error:', error); hideLoader(); alert('Erreur: ' + error.message); }
     }
+
+    // Show Google Sheets directly in chat (integrated experience)
+    async function showSheetsInChat() {
+      console.log('[SHEETS-CHAT] Loading sheets into chat...');
+      var chatMessages = document.getElementById('ai-chat-messages');
+
+      // Add loading message in chat
+      var loadingId = 'sheets-loading-' + Date.now();
+      var loadingHtml = `
+        <div id="${loadingId}" class="ai-message" style="display: flex; gap: 12px; align-items: flex-start;">
+          <div style="width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, #0f9d58, #34a853); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M3 9h18" stroke="white" stroke-width="1.5" fill="none"/></svg>
+          </div>
+          <div style="flex: 1; background: rgba(15, 157, 88, 0.1); border: 1px solid rgba(15, 157, 88, 0.2); border-radius: 12px; padding: 14px 16px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <div style="width: 16px; height: 16px; border: 2px solid rgba(15, 157, 88, 0.4); border-top-color: #0f9d58; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+              <span style="color: rgba(255,255,255,0.7); font-size: 13px;">Chargement de tes fichiers...</span>
+            </div>
+          </div>
+        </div>
+      `;
+      chatMessages.insertAdjacentHTML('beforeend', loadingHtml);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+
+      try {
+        var { data: { session } } = await supabaseClient.auth.getSession();
+        var response = await fetch(SUPABASE_URL + '/functions/v1/list-google-sheets', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + session.access_token,
+            'apikey': SUPABASE_ANON_KEY
+          },
+          body: JSON.stringify({ limit: 50 })
+        });
+        var result = await response.json();
+
+        // Remove loading message
+        var loadingEl = document.getElementById(loadingId);
+        if (loadingEl) loadingEl.remove();
+
+        if (!result.success) throw new Error(result.error);
+
+        if (result.sheets?.length > 0) {
+          // Sort and identify suggested files
+          var sortedSheets = sortByDate(result.sheets);
+          var suggested = sortedSheets.filter(isLikelyComptaFile).slice(0, 2);
+          var suggestedIds = suggested.map(function(s) { return s.id; });
+          var recents = sortedSheets.filter(function(s) { return suggestedIds.indexOf(s.id) === -1; }).slice(0, 3);
+
+          // Build compact sheets HTML for chat
+          var sheetsHtml = `
+            <div class="ai-message" style="display: flex; gap: 10px; align-items: flex-start;">
+              <div style="width: 32px; height: 32px; border-radius: 8px; background: linear-gradient(135deg, #0f9d58, #34a853); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M3 9h18" stroke="white" stroke-width="1.5" fill="none"/></svg>
+              </div>
+              <div style="flex: 1; background: rgba(15, 157, 88, 0.1); border: 1px solid rgba(15, 157, 88, 0.2); border-radius: 10px; padding: 12px;">
+
+                ${suggested.length > 0 ? `
+                  <p style="color: #0f9d58; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin: 0 0 6px 0;">Suggestions</p>
+                  <div style="display: flex; flex-direction: column; gap: 4px; margin-bottom: 10px;">
+                    ${suggested.map(function(sheet) {
+                      return `<button onclick="selectSheetFromChat('${sheet.id}', '${sheet.name.replace(/'/g, "\\'")}', '${sheet.fileType || 'google-sheet'}')" style="display: flex; align-items: center; gap: 8px; padding: 6px 10px; background: rgba(15, 157, 88, 0.1); border: 1px solid rgba(15, 157, 88, 0.25); border-radius: 8px; cursor: pointer; transition: all 0.2s; text-align: left;" onmouseover="this.style.background='rgba(15, 157, 88, 0.2)'" onmouseout="this.style.background='rgba(15, 157, 88, 0.1)'">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="#0f9d58"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
+                        <span style="flex: 1; color: white; font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${sheet.name}</span>
+                      </button>`;
+                    }).join('')}
+                  </div>
+                ` : ''}
+
+                ${recents.length > 0 ? `
+                  <p style="color: rgba(255,255,255,0.4); font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin: 0 0 6px 0;">Recents</p>
+                  <div style="display: flex; flex-direction: column; gap: 4px; margin-bottom: 10px;">
+                    ${recents.map(function(sheet) {
+                      return `<button onclick="selectSheetFromChat('${sheet.id}', '${sheet.name.replace(/'/g, "\\'")}', '${sheet.fileType || 'google-sheet'}')" style="display: flex; align-items: center; gap: 8px; padding: 6px 10px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; cursor: pointer; transition: all 0.2s; text-align: left;" onmouseover="this.style.background='rgba(255,255,255,0.08)'" onmouseout="this.style.background='rgba(255,255,255,0.03)'">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="rgba(255,255,255,0.4)"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
+                        <span style="flex: 1; color: rgba(255,255,255,0.7); font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${sheet.name}</span>
+                      </button>`;
+                    }).join('')}
+                  </div>
+                ` : ''}
+
+                <button onclick="openSheetsPicker()" style="width: 100%; padding: 6px 10px; background: transparent; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: rgba(255,255,255,0.5); font-size: 11px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 6px;" onmouseover="this.style.background='rgba(255,255,255,0.05)';this.style.color='rgba(255,255,255,0.7)'" onmouseout="this.style.background='transparent';this.style.color='rgba(255,255,255,0.5)'">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                  Rechercher (${sortedSheets.length} fichiers)
+                </button>
+              </div>
+            </div>
+          `;
+
+          chatMessages.insertAdjacentHTML('beforeend', sheetsHtml);
+        } else {
+          // No sheets found
+          var noSheetsHtml = `
+            <div class="ai-message" style="display: flex; gap: 12px; align-items: flex-start;">
+              <div style="width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, #0f9d58, #34a853); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M3 9h18" stroke="white" stroke-width="1.5" fill="none"/></svg>
+              </div>
+              <div style="flex: 1; background: rgba(15, 157, 88, 0.1); border: 1px solid rgba(15, 157, 88, 0.2); border-radius: 12px; padding: 14px 16px;">
+                <p style="color: rgba(255,255,255,0.9); font-size: 14px; margin: 0 0 8px 0;">Je ne trouve pas de fichiers Google Sheets dans ton Drive.</p>
+                <p style="color: rgba(255,255,255,0.5); font-size: 13px; margin: 0;">Tu peux m'envoyer un fichier Excel ou me decrire ta compta.</p>
+              </div>
+            </div>
+          `;
+          chatMessages.insertAdjacentHTML('beforeend', noSheetsHtml);
+        }
+
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+
+      } catch (error) {
+        console.error('[SHEETS-CHAT] Error:', error);
+        var loadingEl = document.getElementById(loadingId);
+        if (loadingEl) loadingEl.remove();
+
+        var errorHtml = `
+          <div class="ai-message" style="display: flex; gap: 12px; align-items: flex-start;">
+            <div style="width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, #ef4444, #dc2626); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+            </div>
+            <div style="flex: 1; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 12px; padding: 14px 16px;">
+              <p style="color: rgba(255,255,255,0.9); font-size: 14px; margin: 0;">Impossible de charger tes fichiers. Tu peux m'envoyer un Excel ou decrire ta compta.</p>
+            </div>
+          </div>
+        `;
+        chatMessages.insertAdjacentHTML('beforeend', errorHtml);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      }
+    }
+
+    // Handle sheet selection from chat
+    // AI Chat dedicated flow - stays entirely in chat
+    async function selectSheetFromChat(id, name, fileType) {
+      console.log('[AI-CHAT] Selected sheet:', name);
+      var chatMessages = document.getElementById('ai-chat-messages');
+
+      // Show user selection
+      chatMessages.insertAdjacentHTML('beforeend', `
+        <div style="display: flex; justify-content: flex-end;">
+          <div style="background: rgba(15, 157, 88, 0.2); border: 1px solid rgba(15, 157, 88, 0.3); border-radius: 10px; padding: 10px 14px; display: flex; align-items: center; gap: 8px;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="#4ade80"><rect x="3" y="3" width="18" height="18" rx="2" fill="none" stroke="#4ade80" stroke-width="2"/><path d="M9 3v18M3 9h18" stroke="#4ade80" stroke-width="1.5"/></svg>
+            <span style="font-size: 13px; color: #4ade80;">${escapeHtml(name)}</span>
+          </div>
+        </div>
+      `);
+
+      // Show analyzing message in chat
+      var analyzingId = 'analyzing-' + Date.now();
+      chatMessages.insertAdjacentHTML('beforeend', `
+        <div id="${analyzingId}" class="ai-message" style="display: flex; gap: 10px; align-items: flex-start;">
+          <div style="width: 32px; height: 32px; border-radius: 8px; background: linear-gradient(135deg, #a855f7, #7c3aed); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><circle cx="12" cy="12" r="3"/><path d="M12 2v4m0 12v4m10-10h-4M6 12H2"/></svg>
+          </div>
+          <div style="flex: 1; background: rgba(168, 85, 247, 0.1); border: 1px solid rgba(168, 85, 247, 0.2); border-radius: 10px; padding: 12px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <div style="width: 14px; height: 14px; border: 2px solid rgba(168, 85, 247, 0.3); border-top-color: #a855f7; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+              <span style="color: rgba(255,255,255,0.8); font-size: 13px;">Analyse de ton fichier en cours...</span>
+            </div>
+          </div>
+        </div>
+      `);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+
+      try {
+        // Refresh session first
+        await supabaseClient.auth.refreshSession();
+        var { data: { session } } = await supabaseClient.auth.getSession();
+        if (!session) throw new Error('Non authentifie - reconnecte-toi');
+
+        // Step 1: Read the Google Sheet
+        console.log('[AI-CHAT] Reading sheet with token:', session.access_token.substring(0, 20) + '...');
+        var readResponse = await fetch(SUPABASE_URL + '/functions/v1/read-google-sheet', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + session.access_token,
+            'apikey': SUPABASE_ANON_KEY
+          },
+          body: JSON.stringify({ sheetId: id })
+        });
+        console.log('[AI-CHAT] Read response status:', readResponse.status);
+        var readResult = await readResponse.json();
+        console.log('[AI-CHAT] Read result:', readResult);
+        if (!readResult.success) throw new Error('Lecture: ' + (readResult.error || 'echouee'));
+
+        // Extract headers and formulas from sheet
+        var sheetData = readResult.excelData;
+        var firstSheet = sheetData?.sheets?.[0];
+
+        var headers = [];
+        var headersWithLetters = [];
+        if (firstSheet?.detectedHeaders?.columns) {
+          firstSheet.detectedHeaders.columns.forEach(function(h) {
+            headers.push(h.name);
+            headersWithLetters.push(h.name + ' (col ' + h.letter + ')');
+          });
+        }
+
+        // Extract formulas
+        var formulas = [];
+        if (firstSheet?.formulas) {
+          var formulaEntries = Object.entries(firstSheet.formulas);
+          // Get unique formulas (by pattern, not cell ref)
+          var seenPatterns = {};
+          formulaEntries.forEach(function(entry) {
+            var cellRef = entry[0];
+            var formula = entry[1];
+            // Simplify formula pattern (replace row numbers with X)
+            var pattern = formula.replace(/\d+/g, 'X');
+            if (!seenPatterns[pattern]) {
+              seenPatterns[pattern] = true;
+              formulas.push(cellRef + ': ' + formula);
+            }
+          });
+        }
+
+        console.log('[AI-CHAT] Headers detected:', headers);
+        console.log('[AI-CHAT] Formulas found:', formulas.length);
+
+        // Step 2: Send detailed info to Claude for analysis
+        var userMessage = 'J\'ai selectionne mon fichier "' + name + '".\n\n';
+        userMessage += 'COLONNES DETECTEES:\n' + headersWithLetters.join(', ') + '\n\n';
+        if (formulas.length > 0) {
+          userMessage += 'FORMULES TROUVEES:\n' + formulas.slice(0, 8).join('\n') + '\n\n';
+        }
+        userMessage += 'Analyse mon fichier et dis-moi ce que tu comprends de ma compta. Quelles colonnes je remplis manuellement ? Lesquelles sont calculees ?';
+
+        aiConversationHistory.push({ role: 'user', content: userMessage });
+        var aiResponse = await callAIConfigAssistant(aiConversationHistory);
+
+        // Remove analyzing message
+        var analyzingEl = document.getElementById(analyzingId);
+        if (analyzingEl) analyzingEl.remove();
+
+        // Show AI response
+        addChatMessage(aiResponse.message, 'ai');
+        aiConversationHistory.push({ role: 'assistant', content: aiResponse.message });
+
+        // Store sheet data for later
+        aiSelectedSheetData = { id: id, name: name, fileType: fileType, sheetData: sheetData };
+
+        // If config was generated, show preview
+        if (aiResponse.config) {
+          aiGeneratedConfig = aiResponse.config;
+          showAIConfigPreview(aiResponse.config);
+        }
+
+      } catch (error) {
+        console.error('[AI-CHAT] Error:', error);
+        var analyzingEl = document.getElementById(analyzingId);
+        if (analyzingEl) analyzingEl.remove();
+        addChatMessage('Desole, je n\'arrive pas a lire ce fichier. ' + error.message, 'ai');
+      }
+    }
+
+    var aiSelectedSheetData = null;
 
     var allSheets = []; // Store all sheets for filtering
     var currentFilter = 'all';
@@ -3931,13 +3857,38 @@
         });
       }
 
-      // Charger les règles personnalisées existantes
+      // Charger les règles personnalisées existantes - parser la formule si nécessaire
       customRules = [];
       if (pendingConfig && pendingConfig.regles_calcul) {
         customRules = pendingConfig.regles_calcul.map(function(r) {
+          var sources = r.sources || [];
+          var operations = r.operations || [];
+
+          // Si on a une formule string (de l'AI), la parser
+          if (r.formula && typeof r.formula === 'string' && sources.length === 0) {
+            var parts = r.formula.split(/\s*([\+\-\*\/])\s*/);
+            sources = [];
+            operations = [];
+            for (var i = 0; i < parts.length; i++) {
+              var part = parts[i].trim();
+              if (part === '+' || part === '-' || part === '*' || part === '/') {
+                operations.push(part);
+              } else if (part) {
+                sources.push(part);
+              }
+            }
+          }
+
+          // Assurer qu'on a le bon nombre d'opérations
+          if (operations.length < sources.length - 1) {
+            while (operations.length < sources.length - 1) {
+              operations.push('+');
+            }
+          }
+
           return {
-            sources: r.sources || [],
-            operations: r.operations || (r.sources || []).slice(1).map(function() { return '+'; }),
+            sources: sources,
+            operations: operations,
             target: r.target || '',
             createTarget: r.createTarget || false
           };
@@ -4797,8 +4748,8 @@
 
     // ========== SIDEBAR NAVIGATION ==========
     function updateSidebarStep(stepNum) {
-      // Update desktop sidebar (5 steps now)
-      for (var i = 1; i <= 5; i++) {
+      // Update desktop sidebar
+      for (var i = 1; i <= 4; i++) {
         var stepEl = document.getElementById('step-nav-' + i);
         if (!stepEl) continue;
         stepEl.classList.remove('completed', 'active', 'upcoming');
@@ -4807,7 +4758,7 @@
         if (i < stepNum) {
           stepEl.classList.add('completed');
           stepEl.querySelector('.step-number').innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>';
-          // Allow clicking on completed steps (except step 1)
+          // Step 1 (Connexion Google) n'est pas cliquable une fois complété
           if (i > 1) {
             stepEl.onclick = function(s) { return function() { goToStep(s); }; }(i);
             stepEl.style.cursor = 'pointer';
@@ -4828,7 +4779,7 @@
     }
 
     function updateMobileProgress(stepNum) {
-      var stepLabels = ['Ta compta', 'Configuration', 'Google Sheets', 'Paiement', 'Telegram'];
+      var stepLabels = ['Connexion Google', 'Ton fichier', 'Configuration', 'Telegram'];
       var mobileSteps = document.querySelectorAll('.mobile-step');
       var mobileLines = document.querySelectorAll('.mobile-step-line');
       var mobileLabel = document.getElementById('mobile-step-label');
@@ -4859,181 +4810,6 @@
       }
     }
 
-    // =============================================
-    // NEW WIZARD FLOW - Stylish experience
-    // =============================================
-
-    var wizardConversationHistory = [];
-    var wizardGeneratedConfig = null;
-
-    function showFileUpload() {
-      console.log('[WIZARD] Show file upload');
-      document.querySelector('.choice-cards').style.display = 'none';
-      document.getElementById('file-upload-zone').style.display = 'block';
-      document.getElementById('ai-guide-zone').style.display = 'none';
-    }
-
-    function hideFileUpload() {
-      console.log('[WIZARD] Hide file upload');
-      document.querySelector('.choice-cards').style.display = 'grid';
-      document.getElementById('file-upload-zone').style.display = 'none';
-    }
-
-    function showAIGuide() {
-      console.log('[WIZARD] Show AI guide');
-      document.querySelector('.choice-cards').style.display = 'none';
-      document.getElementById('file-upload-zone').style.display = 'none';
-      document.getElementById('ai-guide-zone').style.display = 'block';
-      // Reset conversation
-      wizardConversationHistory = [];
-      wizardGeneratedConfig = null;
-    }
-
-    function hideAIGuide() {
-      console.log('[WIZARD] Hide AI guide');
-      document.querySelector('.choice-cards').style.display = 'grid';
-      document.getElementById('ai-guide-zone').style.display = 'none';
-    }
-
-    async function handleFileUploadNew(event) {
-      var file = event.target.files[0];
-      if (!file) return;
-
-      console.log('[WIZARD] File selected:', file.name);
-
-      // Store the file for later
-      pendingLocalFile = file;
-
-      // Show global loader
-      showGlobalLoader(file.name);
-
-      // Parse and analyze file
-      try {
-        var result = await analyzeExcelFile(file);
-        console.log('[WIZARD] File analyzed:', result);
-
-        // Go to config step with animation
-        hideGlobalLoader();
-        goToStep(2); // Config preview step
-      } catch (error) {
-        console.error('[WIZARD] File analysis error:', error);
-        hideGlobalLoader();
-        alert('Erreur lors de l\'analyse du fichier. Veuillez réessayer.');
-      }
-    }
-
-    async function sendWizardMessage() {
-      var input = document.getElementById('wizard-chat-input');
-      var message = input.value.trim();
-      if (!message) return;
-
-      console.log('[WIZARD] User message:', message);
-      input.value = '';
-
-      // Add user message to chat
-      addWizardChatMessage(message, 'user');
-      wizardConversationHistory.push({ role: 'user', content: message });
-
-      // Show typing indicator
-      var typingId = showWizardTypingIndicator();
-
-      try {
-        // Call Claude API
-        var response = await callAIConfigAssistant(wizardConversationHistory);
-        console.log('[WIZARD] AI Response:', response);
-
-        // Remove typing indicator
-        removeWizardTypingIndicator(typingId);
-
-        // Add AI response
-        addWizardChatMessage(response.message, 'ai');
-        wizardConversationHistory.push({ role: 'assistant', content: response.message });
-
-        // If config was generated, show preview and go to next step
-        if (response.config) {
-          wizardGeneratedConfig = response.config;
-          console.log('[WIZARD] Config generated:', wizardGeneratedConfig);
-
-          // Wait a moment then go to config preview
-          setTimeout(function() {
-            pendingConfig = {
-              columns: response.config.colonnes_a_remplir,
-              rules: response.config.regles_calcul,
-              protectedColumns: response.config.colonnes_protegees
-            };
-            goToStep(2); // Config preview step
-          }, 1500);
-        }
-      } catch (error) {
-        console.error('[WIZARD] Error:', error);
-        removeWizardTypingIndicator(typingId);
-        addWizardChatMessage("Desole, j'ai eu un probleme. Peux-tu reformuler ?", 'ai');
-      }
-    }
-
-    function addWizardChatMessage(text, sender) {
-      var chatMessages = document.getElementById('wizard-chat-messages');
-      var html = '';
-      if (sender === 'user') {
-        html = '<div class="chat-msg chat-msg-user"><div class="chat-avatar chat-avatar-user">Moi</div><div class="chat-bubble chat-bubble-user"><p>' + escapeHtml(text) + '</p></div></div>';
-      } else {
-        html = '<div class="chat-msg chat-msg-bot"><div class="chat-avatar chat-avatar-bot"><svg width="16" height="16" viewBox="0 0 24 24" fill="white"><circle cx="12" cy="12" r="3"/></svg></div><div class="chat-bubble chat-bubble-bot"><p>' + formatAIResponse(text) + '</p></div></div>';
-      }
-      chatMessages.insertAdjacentHTML('beforeend', html);
-      chatMessages.scrollTop = chatMessages.scrollHeight;
-    }
-
-    function showWizardTypingIndicator() {
-      var id = 'wizard-typing-' + Date.now();
-      var chatMessages = document.getElementById('wizard-chat-messages');
-      var html = '<div id="' + id + '" class="chat-msg chat-msg-bot"><div class="chat-avatar chat-avatar-bot"><svg width="16" height="16" viewBox="0 0 24 24" fill="white"><circle cx="12" cy="12" r="3"/></svg></div><div class="chat-bubble chat-bubble-bot"><div style="display: flex; gap: 4px;"><div style="width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.4); animation: typingDot 1.4s infinite ease-in-out;"></div><div style="width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.4); animation: typingDot 1.4s infinite ease-in-out 0.2s;"></div><div style="width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.4); animation: typingDot 1.4s infinite ease-in-out 0.4s;"></div></div></div></div>';
-      chatMessages.insertAdjacentHTML('beforeend', html);
-      chatMessages.scrollTop = chatMessages.scrollHeight;
-      return id;
-    }
-
-    function removeWizardTypingIndicator(id) {
-      var el = document.getElementById(id);
-      if (el) el.remove();
-    }
-
-    // Setup drag & drop for new file zone
-    function setupNewDropZone() {
-      var dropArea = document.getElementById('drop-area-new');
-      if (!dropArea) return;
-
-      ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(function(eventName) {
-        dropArea.addEventListener(eventName, function(e) {
-          e.preventDefault();
-          e.stopPropagation();
-        });
-      });
-
-      ['dragenter', 'dragover'].forEach(function(eventName) {
-        dropArea.addEventListener(eventName, function() {
-          dropArea.classList.add('dragover');
-        });
-      });
-
-      ['dragleave', 'drop'].forEach(function(eventName) {
-        dropArea.addEventListener(eventName, function() {
-          dropArea.classList.remove('dragover');
-        });
-      });
-
-      dropArea.addEventListener('drop', function(e) {
-        var files = e.dataTransfer.files;
-        if (files.length > 0) {
-          document.getElementById('file-input-new').files = files;
-          handleFileUploadNew({ target: { files: files } });
-        }
-      });
-    }
-
-    // =============================================
-    // NAVIGATION - Updated for new flow
-    // =============================================
-
     function goToStep(stepNum) {
       console.log('[NAV] goToStep', stepNum);
 
@@ -5043,44 +4819,47 @@
       document.querySelectorAll('.step-content').forEach(function(el) { el.classList.remove('active'); });
 
       if (stepNum === 1) {
-        // Étape 1 = Ta compta (wizard start)
-        document.getElementById('step-start').classList.add('active');
-        // Reset wizard UI
-        var choiceCards = document.querySelector('.choice-cards');
-        if (choiceCards) choiceCards.style.display = 'grid';
-        var fileZone = document.getElementById('file-upload-zone');
-        if (fileZone) fileZone.style.display = 'none';
-        var aiZone = document.getElementById('ai-guide-zone');
-        if (aiZone) aiZone.style.display = 'none';
+        // Étape 1 = Connexion Google
+        if (hasGoogleSheetsAccess) {
+          document.getElementById('step-choice').classList.add('active');
+        } else {
+          document.getElementById('step-auth').classList.add('active');
+        }
         updateSidebarStep(1);
       } else if (stepNum === 2) {
-        // Étape 2 = Configuration preview
-        document.getElementById('step-analyse').classList.add('active');
+        // Étape 2 = Choix du fichier
+        document.getElementById('step-choice').classList.add('active');
         updateSidebarStep(2);
       } else if (stepNum === 3) {
-        // Étape 3 = Google Auth
-        document.getElementById('step-auth').classList.add('active');
+        // Étape 3 = Analyse (page intégrée)
+        document.getElementById('step-analyse').classList.add('active');
         updateSidebarStep(3);
       } else if (stepNum === 4) {
-        // Étape 4 = Paiement (Stripe) - à implémenter
-        // Pour l'instant, skip to Telegram
-        goToStep(5);
-      } else if (stepNum === 5) {
-        // Étape 5 = Telegram
-        console.log('[NAV] Activation step-telegram...');
+        // Étape 4 = Telegram
+        console.log('[NAV] 🔵 Activation step-telegram...');
 
         // FORCE: Fermer TOUS les loaders et overlays
         document.getElementById('global-loader')?.classList.remove('active');
         document.getElementById('welcome-overlay')?.classList.remove('active');
         document.querySelectorAll('.sheets-overlay').forEach(function(el) { el.classList.remove('active'); });
+        console.log('[NAV] 🧹 All overlays/loaders cleared');
 
         var telegramStep = document.getElementById('step-telegram');
         if (telegramStep) {
           telegramStep.classList.add('active');
-          telegramStep.style.display = 'block';
+          telegramStep.style.display = 'block'; // Force display
+          console.log('[NAV] ✅ step-telegram activated, display:', telegramStep.style.display);
+        } else {
+          console.error('[NAV] ❌ step-telegram element NOT FOUND!');
         }
 
-        updateSidebarStep(5);
+        // S'assurer que telegram-initial est visible par défaut
+        var telegramInitial = document.getElementById('telegram-initial');
+        if (telegramInitial) {
+          console.log('[NAV] telegram-initial current display:', telegramInitial.style.display);
+        }
+
+        updateSidebarStep(4);
         checkExistingTelegramConnection();
       }
     }
@@ -5108,10 +4887,10 @@
       var isLocalFile = !excelData?.isGoogleSheet && !excelData?.sheetId;
       console.log('[COMPTA] isLocalFile:', isLocalFile, 'hasGoogleSheetsAccess:', hasGoogleSheetsAccess, 'pendingLocalFile:', pendingLocalFile);
 
-      if (!hasGoogleSheetsAccess) {
-        // NEW FLOW: Go to step 3 (Google Auth page) instead of modal
-        console.log('[COMPTA] 📋 Pas d\'accès Google - redirection vers step 3');
-        goToStep(3);
+      if (isLocalFile && !hasGoogleSheetsAccess) {
+        // Show the "connect Google" modal
+        console.log('[COMPTA] 📋 Fichier local sans accès Google - affichage modal');
+        document.getElementById('connect-google-overlay').classList.add('active');
         return;
       }
 
@@ -5162,10 +4941,10 @@
       finalConfig = pendingConfig;
       hasUnsavedChanges = false;
 
-      // Aller à l'étape Telegram (step 5 dans le nouveau flow)
-      console.log('[COMPTA] 🚀 Navigation vers step 5 (Telegram)...');
-      goToStep(5);
-      console.log('[COMPTA] ✅ goToStep(5) completed');
+      // Aller directement à l'étape Telegram
+      console.log('[COMPTA] 🚀 Navigation vers step 4 (Telegram)...');
+      goToStep(4);
+      console.log('[COMPTA] ✅ goToStep(4) completed');
     }
 
     function closeConnectGoogleOverlay() {
@@ -6302,11 +6081,37 @@
           };
         });
 
-        // Charger les règles personnalisées
+        // Charger les règles personnalisées - parser la formule si nécessaire
         customRules = (pendingConfig.regles_calcul || []).map(function(rule) {
+          var sources = rule.sources || [];
+          var operations = rule.operations || [];
+
+          // Si on a une formule string (de l'AI), la parser
+          if (rule.formula && typeof rule.formula === 'string' && sources.length === 0) {
+            // Parser "CB + ESP + TR" ou "CB - Depenses"
+            var parts = rule.formula.split(/\s*([\+\-\*\/])\s*/);
+            sources = [];
+            operations = [];
+            for (var i = 0; i < parts.length; i++) {
+              var part = parts[i].trim();
+              if (part === '+' || part === '-' || part === '*' || part === '/') {
+                operations.push(part);
+              } else if (part) {
+                sources.push(part);
+              }
+            }
+          }
+
+          // Assurer qu'on a le bon nombre d'opérations
+          if (operations.length < sources.length - 1) {
+            while (operations.length < sources.length - 1) {
+              operations.push('+');
+            }
+          }
+
           return {
-            sources: rule.sources || [],
-            operations: rule.operations || (rule.sources || []).slice(1).map(function() { return '+'; }),
+            sources: sources,
+            operations: operations,
             target: rule.target || '',
             createTarget: rule.createTarget || false
           };
@@ -6566,7 +6371,7 @@
       aiGeneratedConfig = null;
       document.getElementById('ai-config-preview').style.display = 'none';
 
-      // Reset messages to just the welcome message
+      // Reset messages to just the welcome message with action buttons
       var chatMessages = document.getElementById('ai-chat-messages');
       chatMessages.innerHTML = `
         <div class="ai-message" style="display: flex; gap: 12px; align-items: flex-start;">
@@ -6574,8 +6379,21 @@
             <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><circle cx="12" cy="12" r="3"/><path d="M12 2v4m0 12v4m10-10h-4M6 12H2m15.07-7.07l-2.83 2.83m-8.48 8.48l-2.83 2.83m0-14.14l2.83 2.83m8.48 8.48l2.83 2.83"/></svg>
           </div>
           <div style="flex: 1; background: rgba(168, 85, 247, 0.1); border: 1px solid rgba(168, 85, 247, 0.2); border-radius: 12px; padding: 14px 16px;">
-            <p style="color: rgba(255,255,255,0.9); font-size: 14px; line-height: 1.6; margin: 0;">
-              Hello ! Envoie-moi ton fichier Excel pour que je l'analyse, ou explique-moi simplement ta compta.
+            <p style="color: rgba(255,255,255,0.9); font-size: 14px; line-height: 1.6; margin: 0 0 14px 0;">
+              Comment tu geres ta compta aujourd'hui ?
+            </p>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px;">
+              <button onclick="document.getElementById('ai-file-input').click()" style="display: flex; align-items: center; gap: 6px; padding: 8px 14px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 20px; color: white; font-size: 13px; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.12)'" onmouseout="this.style.background='rgba(255,255,255,0.08)'">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Envoyer un Excel
+              </button>
+              <button onclick="showSheetsInChat()" style="display: flex; align-items: center; gap: 6px; padding: 8px 14px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 20px; color: white; font-size: 13px; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.12)'" onmouseout="this.style.background='rgba(255,255,255,0.08)'">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0f9d58" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M3 9h18"/></svg>
+                Mon Google Sheet
+              </button>
+            </div>
+            <p style="color: rgba(255,255,255,0.5); font-size: 13px; margin: 0;">
+              Ou decris-moi ta compta : <span style="color: rgba(255,255,255,0.7);">"J'ai CB, especes et tickets resto"</span>
             </p>
           </div>
         </div>
@@ -6658,8 +6476,143 @@
     }
 
     function formatAIResponse(text) {
-      // Convert newlines to <br> and escape HTML
-      return escapeHtml(text).replace(/\n/g, '<br>');
+      // Convert markdown-style formatting to HTML
+      var html = escapeHtml(text);
+      // Bold: **text**
+      html = html.replace(/\*\*([^*]+)\*\*/g, '<strong style="color: #a855f7;">$1</strong>');
+      // Newlines
+      html = html.replace(/\n/g, '<br>');
+      return html;
+    }
+
+    // Add chat message with typing effect - displays progressively
+    async function addChatMessageWithTyping(text, sender) {
+      var chatMessages = document.getElementById('ai-chat-messages');
+
+      // Create message container
+      var messageId = 'typing-msg-' + Date.now();
+      var messageHtml = `
+        <div id="${messageId}" class="ai-message" style="display: flex; gap: 12px; align-items: flex-start; opacity: 0; transition: opacity 0.3s ease;">
+          <div style="width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, #a855f7, #7c3aed); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><circle cx="12" cy="12" r="3"/><path d="M12 2v4m0 12v4m10-10h-4M6 12H2m15.07-7.07l-2.83 2.83m-8.48 8.48l-2.83 2.83m0-14.14l2.83 2.83m8.48 8.48l2.83 2.83"/></svg>
+          </div>
+          <div style="flex: 1; background: rgba(168, 85, 247, 0.1); border: 1px solid rgba(168, 85, 247, 0.2); border-radius: 12px; padding: 14px 16px;">
+            <div id="${messageId}-content" style="color: rgba(255,255,255,0.9); font-size: 14px; line-height: 1.6;"></div>
+          </div>
+        </div>
+      `;
+      chatMessages.insertAdjacentHTML('beforeend', messageHtml);
+
+      // Fade in
+      var msgEl = document.getElementById(messageId);
+      setTimeout(function() { msgEl.style.opacity = '1'; }, 50);
+
+      var contentEl = document.getElementById(messageId + '-content');
+      var formattedText = formatAIResponse(text);
+
+      // Split into paragraphs/sections for progressive display
+      var sections = formattedText.split(/<br><br>|<br>(?=<strong>)/);
+
+      for (var i = 0; i < sections.length; i++) {
+        var section = sections[i].trim();
+        if (!section) continue;
+
+        // Add section with fade effect
+        var sectionEl = document.createElement('div');
+        sectionEl.style.cssText = 'opacity: 0; transition: opacity 0.3s ease; margin-bottom: 8px;';
+        sectionEl.innerHTML = section;
+        contentEl.appendChild(sectionEl);
+
+        // Scroll to show new content
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+
+        // Fade in after small delay
+        await new Promise(function(resolve) {
+          setTimeout(function() {
+            sectionEl.style.opacity = '1';
+            resolve();
+          }, 80);
+        });
+
+        // Small pause between sections
+        if (i < sections.length - 1) {
+          await new Promise(function(resolve) { setTimeout(resolve, 150); });
+        }
+      }
+
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    // Progress indicator with animated steps
+    var progressSteps = [
+      { text: "Lecture du fichier...", duration: 800 },
+      { text: "Analyse de la structure...", duration: 1200 },
+      { text: "Detection des formules...", duration: 1000 },
+      { text: "Reflexion en cours...", duration: 0 }
+    ];
+    var currentProgressInterval = null;
+
+    function showProgressIndicator() {
+      var id = 'progress-' + Date.now();
+      var chatMessages = document.getElementById('ai-chat-messages');
+      var html = `
+        <div id="${id}" class="ai-message" style="display: flex; gap: 12px; align-items: flex-start;">
+          <div style="width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, #a855f7, #7c3aed); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+            <div style="width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.8s linear infinite;"></div>
+          </div>
+          <div style="flex: 1; background: rgba(168, 85, 247, 0.1); border: 1px solid rgba(168, 85, 247, 0.2); border-radius: 12px; padding: 14px 16px;">
+            <p id="${id}-text" style="color: rgba(255,255,255,0.85); font-size: 14px; margin: 0; transition: opacity 0.3s ease;">${progressSteps[0].text}</p>
+          </div>
+        </div>
+      `;
+      chatMessages.insertAdjacentHTML('beforeend', html);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+
+      // Animate through steps
+      var stepIndex = 0;
+      var totalDelay = 0;
+
+      function showNextStep() {
+        stepIndex++;
+        if (stepIndex >= progressSteps.length) return;
+
+        var textEl = document.getElementById(id + '-text');
+        if (!textEl) return;
+
+        // Fade out
+        textEl.style.opacity = '0';
+        setTimeout(function() {
+          if (!textEl) return;
+          textEl.textContent = progressSteps[stepIndex].text;
+          // Fade in
+          textEl.style.opacity = '1';
+
+          // Schedule next step
+          if (stepIndex < progressSteps.length - 1 && progressSteps[stepIndex].duration > 0) {
+            currentProgressInterval = setTimeout(showNextStep, progressSteps[stepIndex].duration);
+          }
+        }, 300);
+      }
+
+      // Start animation
+      if (progressSteps[0].duration > 0) {
+        currentProgressInterval = setTimeout(showNextStep, progressSteps[0].duration);
+      }
+
+      return id;
+    }
+
+    function removeProgressIndicator(id) {
+      if (currentProgressInterval) {
+        clearTimeout(currentProgressInterval);
+        currentProgressInterval = null;
+      }
+      var el = document.getElementById(id);
+      if (el) {
+        el.style.transition = 'opacity 0.3s ease';
+        el.style.opacity = '0';
+        setTimeout(function() { if (el) el.remove(); }, 300);
+      }
     }
 
     function showTypingIndicator() {
@@ -6705,16 +6658,21 @@
 
     async function callAIConfigAssistant(history) {
       // Call Supabase Edge Function that wraps Claude API
+      // First refresh session to ensure token is valid
+      await supabaseClient.auth.refreshSession();
       var session = await supabaseClient.auth.getSession();
       if (!session.data.session) {
-        throw new Error('Non authentifie');
+        throw new Error('Non authentifie - reconnecte-toi');
       }
+
+      console.log('[AI] Calling API with token:', session.data.session.access_token.substring(0, 20) + '...');
 
       var response = await fetch(SUPABASE_URL + '/functions/v1/ai-config-assistant', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + session.data.session.access_token
+          'Authorization': 'Bearer ' + session.data.session.access_token,
+          'apikey': SUPABASE_ANON_KEY
         },
         body: JSON.stringify({
           conversation: history,
@@ -6722,12 +6680,17 @@
         })
       });
 
+      console.log('[AI] Response status:', response.status);
+      var responseText = await response.text();
+      console.log('[AI] Response body:', responseText);
+
       if (!response.ok) {
-        var errorData = await response.json().catch(function() { return {}; });
-        throw new Error(errorData.error || 'Erreur API');
+        var errorData = {};
+        try { errorData = JSON.parse(responseText); } catch(e) {}
+        throw new Error(errorData.error || 'Erreur API ' + response.status);
       }
 
-      return await response.json();
+      return JSON.parse(responseText);
     }
 
     function showAIConfigPreview(config) {
@@ -6749,13 +6712,31 @@
         });
       }
 
-      // Show rules as compact badges
+      // Show rules as compact badges with full formula
       if (config.regles_calcul && config.regles_calcul.length > 0) {
         rulesDiv.innerHTML = '';
         config.regles_calcul.forEach(function(rule) {
-          var ruleEl = document.createElement('span');
-          ruleEl.style.cssText = 'display: inline-block; padding: 4px 10px; background: rgba(255,107,53,0.1); border: 1px solid rgba(255,107,53,0.2); border-radius: 6px; font-size: 11px; color: rgba(255,255,255,0.7);';
-          ruleEl.textContent = rule.target;
+          var ruleEl = document.createElement('div');
+          ruleEl.style.cssText = 'display: flex; align-items: center; gap: 8px; padding: 8px 12px; background: rgba(255,107,53,0.1); border: 1px solid rgba(255,107,53,0.2); border-radius: 8px; font-size: 12px; margin-bottom: 6px;';
+
+          // Show formula (e.g., "CB + ESP + TR")
+          var formulaSpan = document.createElement('span');
+          formulaSpan.style.cssText = 'color: rgba(255,255,255,0.9); font-family: monospace;';
+          formulaSpan.textContent = rule.formula || '?';
+          ruleEl.appendChild(formulaSpan);
+
+          // Arrow
+          var arrowSpan = document.createElement('span');
+          arrowSpan.style.cssText = 'color: #ff6b35;';
+          arrowSpan.textContent = '→';
+          ruleEl.appendChild(arrowSpan);
+
+          // Target column
+          var targetSpan = document.createElement('span');
+          targetSpan.style.cssText = 'color: #4ade80; font-weight: 600;';
+          targetSpan.textContent = rule.target;
+          ruleEl.appendChild(targetSpan);
+
           rulesDiv.appendChild(ruleEl);
         });
         rulesSection.style.display = 'block';
@@ -6788,8 +6769,8 @@
       // Show file bubble in chat
       addFileBubble(file.name);
 
-      // Show typing indicator
-      var typingId = showTypingIndicator();
+      // Show progress indicator with steps
+      var progressId = showProgressIndicator();
 
       try {
         // Parse Excel file
@@ -6801,32 +6782,50 @@
         var sheet = workbook.Sheets[sheetName];
         var range = XLSX.utils.decode_range(sheet['!ref'] || 'A1');
 
-        // Find headers (first few rows)
-        var headers = [];
+        // Build a COMPLETE view of the file for Claude - global vision
+        var tableRows = [];
         var formulas = [];
+        var maxCol = Math.min(range.e.c, 25); // Max 25 columns for full view
+        var maxRows = Math.min(range.e.r, 25); // Max 25 rows for full view
 
-        // Known short column names to accept
-        var knownShortNames = ['cb', 'tr', 'esp', 'ca', 'ht', 'ttc', 'tva', 'dep'];
-
-        for (var col = range.s.c; col <= Math.min(range.e.c, 20); col++) {
-          for (var row = 0; row <= Math.min(8, range.e.r); row++) {
+        // First pass: identify header row (usually row 1 or 2)
+        var headerRow = -1;
+        for (var row = 0; row <= Math.min(5, range.e.r); row++) {
+          var textCells = 0;
+          for (var col = 0; col <= maxCol; col++) {
             var cell = sheet[XLSX.utils.encode_cell({ r: row, c: col })];
-            if (cell && cell.v && typeof cell.v === 'string') {
-              var name = cell.v.trim();
-              // Skip empty, too long, pure numbers, or single letters (unless known)
-              var isKnown = knownShortNames.includes(name.toLowerCase());
-              var isValidLength = name.length >= 3 && name.length < 30;
-              var isTwoCharValid = name.length === 2 && isKnown;
+            if (cell && cell.t === 's') textCells++;
+          }
+          if (textCells >= 3) {
+            headerRow = row;
+            break;
+          }
+        }
 
-              if (name && !headers.includes(name) && !/^\d+$/.test(name) && !/^[A-Z]$/i.test(name)) {
-                if (isValidLength || isTwoCharValid || isKnown) {
-                  headers.push(name);
-                }
+        // Read ALL rows to understand structure
+        for (var row = 0; row <= maxRows; row++) {
+          var rowData = [];
+          var hasData = false;
+          for (var col = 0; col <= maxCol; col++) {
+            var cell = sheet[XLSX.utils.encode_cell({ r: row, c: col })];
+            var colLetter = XLSX.utils.encode_col(col);
+            if (cell) {
+              hasData = true;
+              var val = cell.v !== undefined ? String(cell.v).trim() : '';
+              // Truncate long values but keep useful info
+              if (val.length > 15) val = val.substring(0, 12) + '...';
+
+              if (cell.f) {
+                // Store ALL formulas - this is critical for understanding
+                formulas.push(colLetter + (row + 1) + ': =' + cell.f);
+                val = '[CALC]';
               }
+              if (val) rowData.push(colLetter + ':' + val);
             }
-            if (cell && cell.f) {
-              formulas.push(XLSX.utils.encode_col(col) + ': ' + cell.f);
-            }
+          }
+          if (hasData && rowData.length > 0) {
+            var rowLabel = row === headerRow ? 'HEADER' : 'Row ' + (row + 1);
+            tableRows.push(rowLabel + ': ' + rowData.join(' | '));
           }
         }
 
@@ -6834,37 +6833,30 @@
         aiUploadedFileData = {
           fileName: file.name,
           sheetName: sheetName,
-          headers: headers.slice(0, 15),
-          formulas: formulas.slice(0, 10),
           file: file
         };
 
-        // Build message for Claude
-        var fileInfo = 'J\'ai analyse le fichier "' + file.name + '".\n';
-        if (headers.length > 0) {
-          fileInfo += 'Colonnes detectees: ' + headers.join(', ') + '\n';
-        }
+        // Build comprehensive message for Claude
+        var userMessage = 'Voici mon fichier Excel "' + file.name + '" (onglet: ' + sheetName + ').\n\n';
+        userMessage += '=== TABLEAU COMPLET ===\n';
+        userMessage += tableRows.join('\n');
+        userMessage += '\n\n';
+
         if (formulas.length > 0) {
-          fileInfo += 'Formules: ' + formulas.slice(0, 5).join(', ');
+          userMessage += '=== TOUTES LES FORMULES ===\n' + formulas.join('\n') + '\n\n';
         }
 
-        // Send file info to Claude for analysis
-        var userMessage = 'J\'ai uploade mon fichier Excel "' + file.name + '".\n';
-        userMessage += 'Colonnes detectees: ' + headers.join(', ') + '\n';
-        if (formulas.length > 0) {
-          userMessage += 'Formules trouvees: ' + formulas.slice(0, 5).join(', ');
-        }
-        userMessage += '\nPeux-tu me proposer une configuration basee sur ces colonnes ?';
+        userMessage += 'Analyse ce fichier EN PROFONDEUR et explique-moi ce que tu comprends de ma compta.';
 
         aiConversationHistory.push({ role: 'user', content: userMessage });
 
         // Call Claude to analyze and generate config
         var aiResponse = await callAIConfigAssistant(aiConversationHistory);
 
-        removeTypingIndicator(typingId);
+        removeProgressIndicator(progressId);
 
-        // Add AI response to chat
-        addChatMessage(aiResponse.message, 'ai');
+        // Add AI response to chat with typing effect
+        await addChatMessageWithTyping(aiResponse.message, 'ai');
         aiConversationHistory.push({ role: 'assistant', content: aiResponse.message });
 
         // If config was generated, show preview
@@ -6875,8 +6867,8 @@
 
       } catch (error) {
         console.error('[AI] File parse error:', error);
-        removeTypingIndicator(typingId);
-        addChatMessage('Desole, je n\'arrive pas a lire ce fichier. Peux-tu m\'expliquer ta compta a la place ?', 'ai');
+        removeProgressIndicator(progressId);
+        addChatMessage('Desole, je n\'arrive pas a lire ce fichier. ' + error.message, 'ai');
       }
 
       // Reset file input
@@ -6901,26 +6893,45 @@
       }
 
       console.log('[AI] Accepting config:', aiGeneratedConfig);
+      console.log('[AI] Selected sheet data:', aiSelectedSheetData);
 
       try {
-        // Create a Google Sheet with this config
-        showLoader('Creation du Google Sheet...');
-
-        // Get session
         var session = await supabaseClient.auth.getSession();
         if (!session.data.session) {
           throw new Error('Non authentifie');
         }
 
-        // Generate column names from config (without Date - Edge Function adds it)
+        // Show nice transition in chat
+        var chatMessages = document.getElementById('ai-chat-messages');
+        chatMessages.insertAdjacentHTML('beforeend', `
+          <div class="ai-message" style="display: flex; gap: 10px; align-items: flex-start;">
+            <div style="width: 32px; height: 32px; border-radius: 8px; background: linear-gradient(135deg, #a855f7, #7c3aed); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+              <div style="width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+            </div>
+            <div style="flex: 1; background: rgba(168, 85, 247, 0.1); border: 1px solid rgba(168, 85, 247, 0.2); border-radius: 10px; padding: 12px;">
+              <p style="color: rgba(255,255,255,0.9); font-size: 13px; margin: 0;">Creation de ton fichier iArmy...</p>
+            </div>
+          </div>
+        `);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+
+        // Always create a NEW iArmy sheet with the config
         var customColumns = [];
         aiGeneratedConfig.colonnes_a_remplir.forEach(function(col) {
           customColumns.push(col.nom);
         });
 
-        console.log('[AI] Creating sheet with columns:', customColumns);
+        // Extract calculation rules
+        var calculationRules = [];
+        if (aiGeneratedConfig.regles_calcul) {
+          calculationRules = aiGeneratedConfig.regles_calcul.map(function(rule) {
+            return { target: rule.target, formula: rule.formula };
+          });
+        }
 
-        // Call create-template-sheet Edge Function
+        console.log('[AI] Creating NEW iArmy sheet with columns:', customColumns);
+        console.log('[AI] With calculation rules:', calculationRules);
+
         var response = await fetch(SUPABASE_URL + '/functions/v1/create-template-sheet', {
           method: 'POST',
           headers: {
@@ -6930,7 +6941,8 @@
           body: JSON.stringify({
             templateType: 'compta-pro',
             year: new Date().getFullYear(),
-            customColumns: customColumns
+            customColumns: customColumns,
+            calculationRules: calculationRules
           })
         });
 
@@ -6941,18 +6953,34 @@
         }
 
         console.log('[AI] Sheet created:', result.sheet.id);
+        var sheetId = result.sheet.id;
+        var sheetName = result.sheet.name;
+
+        // Update chat with success
+        chatMessages.lastElementChild.innerHTML = `
+          <div style="width: 32px; height: 32px; border-radius: 8px; background: linear-gradient(135deg, #22c55e, #16a34a); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+          </div>
+          <div style="flex: 1; background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.2); border-radius: 10px; padding: 12px;">
+            <p style="color: #4ade80; font-size: 13px; font-weight: 500; margin: 0;">Fichier cree : ${sheetName}</p>
+            <p style="color: rgba(255,255,255,0.6); font-size: 12px; margin: 4px 0 0 0;">Configuration de Telegram...</p>
+          </div>
+        `;
+
+        // Wait a bit for user to see the message
+        await new Promise(function(r) { setTimeout(r, 1200); });
 
         // Store in excelData for the flow
         excelData = {
-          sheetId: result.sheet.id,
-          sheetName: result.sheet.name,
+          sheetId: sheetId,
+          sheetName: sheetName,
           isGoogleSheet: true
         };
 
-        // Update google_credentials with the new sheet
+        // Update google_credentials with the sheet
         await supabaseClient.from('google_credentials').update({
-          sheet_id: result.sheet.id,
-          sheet_name: result.sheet.name
+          sheet_id: sheetId,
+          sheet_name: sheetName
         }).eq('user_id', session.data.session.user.id);
 
         // Set pendingConfig
@@ -6963,7 +6991,10 @@
           col.colonne = String.fromCharCode(66 + i); // B, C, D, etc. (A is Date)
         });
 
-        // Save config
+        // Hide the AI chat section
+        document.getElementById('ai-conversation-section').style.display = 'none';
+
+        // Save config and go to final step
         await saveConfigAndContinue();
 
       } catch (error) {
