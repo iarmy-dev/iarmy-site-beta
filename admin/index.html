@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - iArmy</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23FF6B35'/><text x='50' y='68' font-family='Arial' font-size='55' font-weight='bold' fill='white' text-anchor='middle'>i</text></svg>">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Inter', sans-serif; margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #0a0a0a; color: white; min-height: 100vh; }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+
+    /* Header */
+    .header { display: flex; align-items: center; justify-content: space-between; padding: 20px 0; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 30px; }
+    .header h1 { font-size: 24px; font-weight: 700; display: flex; align-items: center; gap: 12px; }
+    .header h1 span { color: #FF6B35; }
+    .admin-badge { background: linear-gradient(135deg, #FF6B35, #FF8B5E); padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+
+    /* Tabs */
+    .tabs { display: flex; gap: 8px; margin-bottom: 24px; }
+    .tab { padding: 10px 20px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; cursor: pointer; font-size: 14px; font-weight: 500; transition: all 0.2s; }
+    .tab:hover { background: rgba(255,255,255,0.06); }
+    .tab.active { background: linear-gradient(135deg, #FF6B35, #FF8B5E); border-color: transparent; }
+
+    /* Stats */
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 30px; }
+    .stat-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 20px; }
+    .stat-value { font-size: 32px; font-weight: 700; color: #FF6B35; }
+    .stat-label { font-size: 13px; color: rgba(255,255,255,0.5); margin-top: 4px; }
+    .stat-card.live { border-color: rgba(34,197,94,0.3); }
+    .stat-card.live .stat-value { color: #4ade80; }
+    .stat-card.live::before { content: ''; position: absolute; top: 12px; right: 12px; width: 8px; height: 8px; background: #4ade80; border-radius: 50%; animation: pulse 2s infinite; }
+    .stat-card { position: relative; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+    /* Search */
+    .search-bar { margin-bottom: 20px; }
+    .search-input { width: 100%; max-width: 400px; padding: 12px 16px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; color: white; font-size: 14px; }
+    .search-input:focus { outline: none; border-color: #FF6B35; }
+    .search-input::placeholder { color: rgba(255,255,255,0.3); }
+
+    /* Table */
+    .users-table { width: 100%; border-collapse: collapse; }
+    .users-table th { text-align: left; padding: 12px 16px; background: rgba(255,255,255,0.03); color: rgba(255,255,255,0.6); font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+    .users-table td { padding: 16px; border-bottom: 1px solid rgba(255,255,255,0.05); vertical-align: middle; }
+    .users-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+    /* User cell */
+    .user-cell { display: flex; align-items: center; gap: 12px; }
+    .user-avatar { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid rgba(255,107,53,0.3); }
+    .user-info { }
+    .user-name { font-weight: 500; font-size: 14px; }
+    .user-email { font-size: 12px; color: rgba(255,255,255,0.5); }
+
+    /* Badges */
+    .module-badges { display: flex; flex-wrap: wrap; gap: 6px; }
+    .module-badge { font-size: 11px; padding: 4px 10px; border-radius: 6px; font-weight: 500; }
+    .module-badge.active { background: rgba(34,197,94,0.15); color: #4ade80; }
+    .module-badge.trialing { background: rgba(59,130,246,0.15); color: #60a5fa; }
+    .module-badge.tester { background: rgba(168,85,247,0.15); color: #c084fc; }
+    .module-badge.canceled { background: rgba(239,68,68,0.15); color: #f87171; }
+    .module-badge.none { background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.4); }
+
+    /* Date */
+    .date-cell { font-size: 13px; color: rgba(255,255,255,0.6); }
+    .date-cell small { display: block; font-size: 11px; color: rgba(255,255,255,0.3); }
+
+    /* Actions */
+    .actions-cell { display: flex; gap: 8px; }
+    .btn-action { padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 500; cursor: pointer; border: none; transition: all 0.2s; }
+    .btn-tester { background: rgba(168,85,247,0.15); color: #c084fc; }
+    .btn-tester:hover { background: rgba(168,85,247,0.3); }
+    .btn-tester.active { background: #a855f7; color: white; }
+    .btn-view { background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.7); }
+    .btn-view:hover { background: rgba(255,255,255,0.1); }
+    .btn-reset { background: rgba(251,191,36,0.15); color: #fbbf24; }
+    .btn-reset:hover { background: rgba(251,191,36,0.3); }
+    .btn-delete { background: rgba(239,68,68,0.15); color: #f87171; }
+    .btn-delete:hover { background: rgba(239,68,68,0.3); }
+
+    /* Tester row highlight */
+    .row-tester { background: rgba(168,85,247,0.08) !important; }
+    .row-tester td { border-bottom-color: rgba(168,85,247,0.2) !important; }
+    .avatar-tester { border-color: #a855f7 !important; box-shadow: 0 0 12px rgba(168,85,247,0.4); }
+    .tester-badge { background: linear-gradient(135deg, #a855f7, #c084fc); color: white; font-size: 9px; padding: 2px 8px; border-radius: 10px; margin-left: 8px; font-weight: 600; vertical-align: middle; }
+
+    /* Analytics specific */
+    .analytics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; }
+    @media (max-width: 768px) { .analytics-grid { grid-template-columns: 1fr; } }
+    .analytics-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 20px; }
+    .analytics-card h3 { font-size: 14px; font-weight: 600; color: rgba(255,255,255,0.7); margin-bottom: 16px; }
+    .visits-list { max-height: 300px; overflow-y: auto; }
+    .visit-item { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .visit-item:last-child { border-bottom: none; }
+    .visit-page { flex: 1; font-size: 13px; }
+    .visit-time { font-size: 11px; color: rgba(255,255,255,0.4); }
+    .visit-dot { width: 8px; height: 8px; border-radius: 50%; background: #FF6B35; }
+    .visit-dot.online { background: #4ade80; animation: pulse 2s infinite; }
+    .page-stat { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .page-stat:last-child { border-bottom: none; }
+    .page-name { font-size: 13px; }
+    .page-count { font-size: 13px; font-weight: 600; color: #FF6B35; }
+
+    /* Toast */
+    .toast { position: fixed; bottom: 20px; right: 20px; padding: 14px 20px; background: #1a1a1a; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; font-size: 14px; z-index: 200; transform: translateY(100px); opacity: 0; transition: all 0.3s; }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast.success { border-color: rgba(34,197,94,0.3); }
+
+    /* Loading */
+    .loading { text-align: center; padding: 60px; color: rgba(255,255,255,0.5); }
+
+    /* No access */
+    .no-access { text-align: center; padding: 100px 20px; }
+    .no-access h2 { font-size: 24px; margin-bottom: 12px; }
+    .no-access p { color: rgba(255,255,255,0.5); }
+
+    /* Section title */
+    .section-title { font-size: 18px; font-weight: 600; margin-bottom: 16px; margin-top: 30px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div id="content">
+      <div class="loading">Chargement...</div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script>
+    const SUPABASE_URL = 'https://byqfnpdcnifauhwgetcq.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ5cWZucGRjbmlmYXVod2dldGNxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc4ODY1MTIsImV4cCI6MjA4MzQ2MjUxMn0.1W2OaRb0sApMvrG_28AoV2zUFAzrptzpwbR1c65tOPo';
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    const ADMIN_EMAILS = ['ludovikh@gmail.com'];
+
+    let allUsers = [];
+    let currentUser = null;
+    let currentTab = 'users';
+    let analyticsData = {};
+
+    async function init() {
+      console.log('[ADMIN] 🚀 Init...');
+
+      const { data: { session }, error: sessionError } = await supabaseClient.auth.getSession();
+      console.log('[ADMIN] Session error:', sessionError);
+      console.log('[ADMIN] Session exists:', !!session);
+
+      if (!session) {
+        console.log('[ADMIN] ❌ Pas de session, redirection...');
+        window.location.href = '../';
+        return;
+      }
+
+      currentUser = session.user;
+      console.log('[ADMIN] User email:', currentUser.email);
+      console.log('[ADMIN] ADMIN_EMAILS:', ADMIN_EMAILS);
+      console.log('[ADMIN] Email in list:', ADMIN_EMAILS.includes(currentUser.email));
+
+      if (!ADMIN_EMAILS.includes(currentUser.email)) {
+        console.log('[ADMIN] ❌ Email pas dans la liste admin');
+        showNoAccess();
+        return;
+      }
+
+      console.log('[ADMIN] ✅ Email OK, chargement dashboard...');
+      await loadDashboard();
+    }
+
+    function showNoAccess() {
+      document.getElementById('content').innerHTML = `
+        <div class="no-access">
+          <h2>Acces refuse</h2>
+          <p>Tu n'as pas les droits d'acces a l'admin.</p>
+          <a href="../" style="color: #FF6B35; margin-top: 20px; display: inline-block;">Retour a l'accueil</a>
+        </div>
+      `;
+    }
+
+    async function loadDashboard() {
+      console.log('[ADMIN] 📊 loadDashboard...');
+
+      // Utiliser l'Edge Function admin-data pour bypass RLS
+      // Forcer un refresh du token pour éviter les JWT expirés
+      const { data: { session }, error: refreshError } = await supabaseClient.auth.refreshSession();
+      console.log('[ADMIN] Refresh error:', refreshError);
+      console.log('[ADMIN] Session after refresh:', !!session);
+
+      if (refreshError || !session) {
+        console.error('[ADMIN] Session refresh error:', refreshError);
+        // Essayer avec getSession comme fallback
+        const { data: { session: fallbackSession } } = await supabaseClient.auth.getSession();
+        console.log('[ADMIN] Fallback session:', !!fallbackSession);
+        if (!fallbackSession) {
+          console.log('[ADMIN] ❌ Pas de session après fallback');
+          showNoAccess();
+          return;
+        }
+      }
+
+      const activeSession = session || (await supabaseClient.auth.getSession()).data.session;
+      if (!activeSession) {
+        console.log('[ADMIN] ❌ Pas de activeSession');
+        showNoAccess();
+        return;
+      }
+
+      console.log('[ADMIN] ✅ Session active, appel Edge Function...');
+
+      try {
+        const response = await fetch(`${SUPABASE_URL}/functions/v1/admin-data`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${activeSession.access_token}`,
+            'apikey': SUPABASE_ANON_KEY
+          }
+        });
+
+        console.log('[ADMIN] Edge Function response status:', response.status);
+
+        if (!response.ok) {
+          const error = await response.json();
+          console.error('[ADMIN] ❌ Admin data error:', error);
+          showNoAccess();
+          return;
+        }
+
+        const { users: usersList, configs, subscriptions, telegramLinks } = await response.json();
+
+        const usersMap = new Map();
+
+        (usersList || []).forEach(u => {
+          usersMap.set(u.user_id, {
+            user_id: u.user_id,
+            email: u.email,
+            full_name: u.full_name,
+            avatar_url: u.avatar_url,
+            modules: [],
+            subscriptions: [],
+            telegram: false,
+            created_at: u.created_at,
+            last_sign_in_at: u.last_sign_in_at
+          });
+        });
+
+        (configs || []).forEach(c => {
+          if (!usersMap.has(c.user_id)) {
+            usersMap.set(c.user_id, { user_id: c.user_id, email: null, full_name: null, modules: [], subscriptions: [], telegram: false, created_at: c.created_at });
+          }
+          usersMap.get(c.user_id).modules.push(c.module_name);
+        });
+
+        (subscriptions || []).forEach(s => {
+          if (!usersMap.has(s.user_id)) {
+            usersMap.set(s.user_id, { user_id: s.user_id, email: null, full_name: null, modules: [], subscriptions: [], telegram: false, created_at: s.created_at });
+          }
+          usersMap.get(s.user_id).subscriptions.push(s);
+        });
+
+        (telegramLinks || []).forEach(t => {
+          if (usersMap.has(t.user_id)) {
+            usersMap.get(t.user_id).telegram = true;
+          }
+        });
+
+        allUsers = Array.from(usersMap.values());
+      } catch (error) {
+        console.error('Error loading admin data:', error);
+        showNoAccess();
+        return;
+      }
+
+      // Charger analytics
+      await loadAnalytics();
+
+      renderDashboard();
+    }
+
+    async function loadAnalytics() {
+      const now = new Date();
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString();
+      const weekAgo = new Date(now - 7 * 24 * 60 * 60 * 1000).toISOString();
+      const fiveMinAgo = new Date(now - 5 * 60 * 1000).toISOString();
+
+      // Visiteurs en ligne (5 dernières minutes)
+      const { data: onlineVisits, count: onlineCount } = await supabaseClient
+        .from('page_visits')
+        .select('visitor_id', { count: 'exact', head: false })
+        .gte('created_at', fiveMinAgo);
+
+      const uniqueOnline = new Set((onlineVisits || []).map(v => v.visitor_id)).size;
+
+      // Visites aujourd'hui
+      const { count: todayCount } = await supabaseClient
+        .from('page_visits')
+        .select('*', { count: 'exact', head: true })
+        .gte('created_at', today);
+
+      // Visiteurs uniques aujourd'hui
+      const { data: todayVisitors } = await supabaseClient
+        .from('page_visits')
+        .select('visitor_id')
+        .gte('created_at', today);
+
+      const uniqueToday = new Set((todayVisitors || []).map(v => v.visitor_id)).size;
+
+      // Visites cette semaine
+      const { count: weekCount } = await supabaseClient
+        .from('page_visits')
+        .select('*', { count: 'exact', head: true })
+        .gte('created_at', weekAgo);
+
+      // Dernières visites
+      const { data: recentVisits } = await supabaseClient
+        .from('page_visits')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(20);
+
+      // Pages les plus visitées (aujourd'hui)
+      const { data: pageStats } = await supabaseClient
+        .from('page_visits')
+        .select('page_path')
+        .gte('created_at', today);
+
+      const pageCounts = {};
+      (pageStats || []).forEach(p => {
+        pageCounts[p.page_path] = (pageCounts[p.page_path] || 0) + 1;
+      });
+      const topPages = Object.entries(pageCounts)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 10);
+
+      analyticsData = {
+        online: uniqueOnline,
+        todayVisits: todayCount || 0,
+        todayUnique: uniqueToday,
+        weekVisits: weekCount || 0,
+        recentVisits: recentVisits || [],
+        topPages
+      };
+    }
+
+    function renderDashboard() {
+      const totalUsers = allUsers.length;
+      const testers = allUsers.filter(u => u.subscriptions.some(s => s.is_tester)).length;
+      const withTelegram = allUsers.filter(u => u.telegram).length;
+      const activeModules = allUsers.reduce((acc, u) => acc + u.modules.length, 0);
+
+      document.getElementById('content').innerHTML = `
+        <header class="header">
+          <h1><span>iArmy</span> Admin <span class="admin-badge">ADMIN</span></h1>
+          <a href="../compte/" style="color: rgba(255,255,255,0.6); text-decoration: none; font-size: 14px;">← Retour au compte</a>
+        </header>
+
+        <div class="tabs">
+          <div class="tab ${currentTab === 'users' ? 'active' : ''}" onclick="switchTab('users')">Utilisateurs</div>
+          <div class="tab ${currentTab === 'analytics' ? 'active' : ''}" onclick="switchTab('analytics')">Analytics</div>
+        </div>
+
+        <div id="tab-content">
+          ${currentTab === 'users' ? renderUsersTab(totalUsers, testers, withTelegram, activeModules) : renderAnalyticsTab()}
+        </div>
+      `;
+    }
+
+    function switchTab(tab) {
+      currentTab = tab;
+      renderDashboard();
+      if (tab === 'analytics') {
+        loadAnalytics().then(() => {
+          document.getElementById('tab-content').innerHTML = renderAnalyticsTab();
+        });
+      }
+    }
+
+    function renderUsersTab(totalUsers, testers, withTelegram, activeModules) {
+      return `
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-value">${totalUsers}</div>
+            <div class="stat-label">Utilisateurs</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value">${testers}</div>
+            <div class="stat-label">Testeurs gratuits</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value">${withTelegram}</div>
+            <div class="stat-label">Telegram connecte</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value">${activeModules}</div>
+            <div class="stat-label">Modules configures</div>
+          </div>
+        </div>
+
+        <div class="search-bar">
+          <input type="text" class="search-input" placeholder="Rechercher par email ou ID..." onkeyup="filterUsers(this.value)">
+        </div>
+
+        <table class="users-table">
+          <thead>
+            <tr>
+              <th>Utilisateur</th>
+              <th>Modules</th>
+              <th>Abonnements</th>
+              <th>Telegram</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="users-tbody">
+            ${renderUsersRows(allUsers)}
+          </tbody>
+        </table>
+      `;
+    }
+
+    function renderAnalyticsTab() {
+      // Init recentVisitors avec les visiteurs actuels
+      if (analyticsData.online) {
+        recentVisitors = new Set();
+        // On garde le count initial
+      }
+
+      return `
+        <div class="stats-grid">
+          <div class="stat-card live">
+            <div class="stat-value" id="live-count" style="transition: transform 0.3s;">${analyticsData.online || 0}</div>
+            <div class="stat-label">En ligne maintenant</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="today-count">${analyticsData.todayVisits || 0}</div>
+            <div class="stat-label">Visites aujourd'hui</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="unique-count">${analyticsData.todayUnique || 0}</div>
+            <div class="stat-label">Visiteurs uniques</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="week-count">${analyticsData.weekVisits || 0}</div>
+            <div class="stat-label">Cette semaine</div>
+          </div>
+        </div>
+
+        <div class="analytics-grid">
+          <div class="analytics-card">
+            <h3>Dernieres visites</h3>
+            <div class="visits-list">
+              ${(analyticsData.recentVisits || []).map(v => {
+                const time = new Date(v.created_at);
+                const isRecent = (Date.now() - time.getTime()) < 5 * 60 * 1000;
+                const timeStr = time.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+                const pageName = v.page_path === '/' ? 'Accueil' : v.page_path;
+                return `
+                  <div class="visit-item">
+                    <div class="visit-dot ${isRecent ? 'online' : ''}"></div>
+                    <div class="visit-page">${pageName}</div>
+                    <div class="visit-time">${timeStr}</div>
+                  </div>
+                `;
+              }).join('') || '<div style="color: rgba(255,255,255,0.4); text-align: center; padding: 20px;">Aucune visite</div>'}
+            </div>
+          </div>
+
+          <div class="analytics-card">
+            <h3>Pages populaires (aujourd'hui)</h3>
+            <div class="visits-list">
+              ${(analyticsData.topPages || []).map(([page, count]) => {
+                const pageName = page === '/' ? 'Accueil' : page;
+                return `
+                  <div class="page-stat">
+                    <div class="page-name">${pageName}</div>
+                    <div class="page-count">${count}</div>
+                  </div>
+                `;
+              }).join('') || '<div style="color: rgba(255,255,255,0.4); text-align: center; padding: 20px;">Aucune donnee</div>'}
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top: 20px; text-align: center;">
+          <button onclick="refreshAnalytics()" class="btn-action btn-view" style="padding: 10px 20px;">
+            Rafraichir les donnees
+          </button>
+        </div>
+      `;
+    }
+
+    async function refreshAnalytics() {
+      await loadAnalytics();
+      document.getElementById('tab-content').innerHTML = renderAnalyticsTab();
+      showToast('Donnees actualisees');
+    }
+
+    function renderUsersRows(users) {
+      if (users.length === 0) {
+        return '<tr><td colspan="5" style="text-align: center; color: rgba(255,255,255,0.4); padding: 40px;">Aucun utilisateur</td></tr>';
+      }
+
+      return users.map(u => {
+        const hasTester = u.subscriptions.some(s => s.is_tester);
+        const subBadges = u.subscriptions.map(s => {
+          let cls = 'none';
+          if (s.is_tester) cls = 'tester';
+          else if (s.status === 'active') cls = 'active';
+          else if (s.status === 'trialing') cls = 'trialing';
+          else if (s.status === 'canceled') cls = 'canceled';
+          return `<span class="module-badge ${cls}">${s.module_name}: ${s.is_tester ? 'Testeur' : s.status}</span>`;
+        }).join('') || '<span class="module-badge none">Aucun</span>';
+
+        const moduleBadges = u.modules.map(m => `<span class="module-badge active">${m}</span>`).join('') || '<span class="module-badge none">-</span>';
+
+        const displayName = u.full_name || u.email?.split('@')[0] || 'Utilisateur';
+        const avatarUrl = u.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=FF6B35&color=fff&size=36`;
+        const testerBadge = hasTester ? '<span class="tester-badge">TESTEUR</span>' : '';
+
+        return `
+          <tr class="${hasTester ? 'row-tester' : ''}">
+            <td>
+              <div class="user-cell">
+                <img src="${avatarUrl}" class="user-avatar ${hasTester ? 'avatar-tester' : ''}" onerror="this.src='https://ui-avatars.com/api/?name=U&background=333&color=fff&size=36'">
+                <div class="user-info">
+                  <div class="user-name">${displayName} ${testerBadge}</div>
+                  <div class="user-email">${u.email || u.user_id.substring(0, 12) + '...'}</div>
+                </div>
+              </div>
+            </td>
+            <td><div class="module-badges">${moduleBadges}</div></td>
+            <td><div class="module-badges">${subBadges}</div></td>
+            <td>${u.telegram ? 'Oui' : 'Non'}</td>
+            <td class="actions-cell">
+              <button class="btn-action btn-tester ${hasTester ? 'active' : ''}" onclick="toggleTester('${u.user_id}', 'compta', ${!hasTester})">
+                ${hasTester ? 'Retirer' : '+ Testeur'}
+              </button>
+              <button class="btn-action btn-reset" onclick="resetUserData('${u.user_id}', '${u.email || 'cet utilisateur'}')" title="Effacer les données">
+                Reset
+              </button>
+              <button class="btn-action btn-delete" onclick="deleteUser('${u.user_id}', '${u.email || 'cet utilisateur'}')" title="Supprimer le compte">
+                ✕
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function filterUsers(query) {
+      const q = query.toLowerCase();
+      const filtered = allUsers.filter(u =>
+        u.user_id.toLowerCase().includes(q) ||
+        (u.email && u.email.toLowerCase().includes(q)) ||
+        (u.full_name && u.full_name.toLowerCase().includes(q))
+      );
+      document.getElementById('users-tbody').innerHTML = renderUsersRows(filtered);
+    }
+
+    async function toggleTester(userId, moduleName, setTester) {
+      try {
+        const { data: existing, error: selectError } = await supabaseClient
+          .from('subscriptions')
+          .select('id')
+          .eq('user_id', userId)
+          .eq('module_name', moduleName)
+          .maybeSingle();
+
+        if (selectError) {
+          console.error('Select error:', selectError);
+          throw selectError;
+        }
+
+        if (existing) {
+          const { error: updateError } = await supabaseClient
+            .from('subscriptions')
+            .update({ is_tester: setTester, status: setTester ? 'tester' : 'trialing' })
+            .eq('user_id', userId)
+            .eq('module_name', moduleName);
+
+          if (updateError) {
+            console.error('Update error:', updateError);
+            throw updateError;
+          }
+        } else {
+          const { error: insertError } = await supabaseClient
+            .from('subscriptions')
+            .insert({
+              user_id: userId,
+              module_name: moduleName,
+              is_tester: setTester,
+              status: setTester ? 'tester' : 'trialing',
+              expires_at: setTester ? null : new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
+            });
+
+          if (insertError) {
+            console.error('Insert error:', insertError);
+            throw insertError;
+          }
+        }
+
+        showToast(setTester ? 'Testeur ajoute !' : 'Testeur retire');
+        await loadDashboard();
+      } catch (err) {
+        console.error('Toggle tester error:', err);
+        showToast('Erreur: ' + (err.message || err.details || 'Inconnue'));
+      }
+    }
+
+    async function resetUserData(userId, userEmail) {
+      if (!confirm(`Effacer toutes les données de ${userEmail} ?\n\nCela supprimera :\n- Configurations modules\n- Abonnements\n- Connexion Telegram\n- Tokens Google\n\nLe compte sera conservé.`)) {
+        return;
+      }
+
+      try {
+        // Supprimer dans toutes les tables
+        await supabaseClient.from('subscriptions').delete().eq('user_id', userId);
+        await supabaseClient.from('module_configs').delete().eq('user_id', userId);
+        await supabaseClient.from('telegram_links').delete().eq('user_id', userId);
+        await supabaseClient.from('google_tokens').delete().eq('user_id', userId);
+
+        showToast('Données effacées pour ' + userEmail);
+        await loadDashboard();
+      } catch (err) {
+        console.error('Reset error:', err);
+        showToast('Erreur: ' + (err.message || 'Inconnue'));
+      }
+    }
+
+    async function deleteUser(userId, userEmail) {
+      if (!confirm(`SUPPRIMER DÉFINITIVEMENT le compte de ${userEmail} ?\n\nCette action est IRRÉVERSIBLE.\nL'utilisateur devra se réinscrire.`)) {
+        return;
+      }
+
+      try {
+        // D'abord supprimer les données
+        await supabaseClient.from('subscriptions').delete().eq('user_id', userId);
+        await supabaseClient.from('module_configs').delete().eq('user_id', userId);
+        await supabaseClient.from('telegram_links').delete().eq('user_id', userId);
+        await supabaseClient.from('google_tokens').delete().eq('user_id', userId);
+
+        // Appeler l'Edge Function pour supprimer le compte auth
+        const response = await fetch(SUPABASE_URL + '/functions/v1/admin-delete-user', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + (await supabaseClient.auth.getSession()).data.session?.access_token
+          },
+          body: JSON.stringify({ userId })
+        });
+
+        const result = await response.json();
+        if (!response.ok) {
+          throw new Error(result.error || 'Erreur suppression');
+        }
+
+        showToast('Compte supprimé : ' + userEmail);
+        await loadDashboard();
+      } catch (err) {
+        console.error('Delete error:', err);
+        showToast('Erreur: ' + (err.message || 'Inconnue'));
+      }
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.classList.add('show', 'success');
+      setTimeout(() => toast.classList.remove('show', 'success'), 3000);
+    }
+
+    // Auto-refresh analytics toutes les 10 secondes si sur l'onglet analytics
+    setInterval(() => {
+      if (currentTab === 'analytics') {
+        loadAnalytics().then(() => {
+          document.getElementById('tab-content').innerHTML = renderAnalyticsTab();
+        });
+      }
+    }, 10000);
+
+    // Supabase Realtime - nouvelle visite en temps réel
+    let realtimeChannel = null;
+    let liveCount = 0;
+    let recentVisitors = new Set();
+
+    function setupRealtime() {
+      if (realtimeChannel) return;
+
+      realtimeChannel = supabaseClient
+        .channel('page_visits_changes')
+        .on('postgres_changes',
+          { event: 'INSERT', schema: 'public', table: 'page_visits' },
+          (payload) => {
+            console.log('Nouvelle visite!', payload.new);
+
+            // Ajouter le visiteur au set des récents
+            recentVisitors.add(payload.new.visitor_id);
+
+            // Update juste les chiffres si on est sur l'onglet analytics
+            if (currentTab === 'analytics') {
+              // Update le compteur "En ligne"
+              const liveEl = document.getElementById('live-count');
+              if (liveEl) {
+                const newCount = recentVisitors.size;
+                liveEl.textContent = newCount;
+                liveEl.style.transform = 'scale(1.2)';
+                setTimeout(() => { liveEl.style.transform = 'scale(1)'; }, 300);
+              }
+
+              // Update visites aujourd'hui
+              const todayEl = document.getElementById('today-count');
+              if (todayEl) {
+                todayEl.textContent = parseInt(todayEl.textContent) + 1;
+              }
+
+              // Update visiteurs uniques
+              const uniqueEl = document.getElementById('unique-count');
+              if (uniqueEl) {
+                uniqueEl.textContent = recentVisitors.size;
+              }
+
+              // Flash vert sur la carte live
+              const liveCard = document.querySelector('.stat-card.live');
+              if (liveCard) {
+                liveCard.style.boxShadow = '0 0 30px rgba(74, 222, 128, 0.6)';
+                setTimeout(() => { liveCard.style.boxShadow = 'none'; }, 1000);
+              }
+
+              // Ajouter la visite en haut de la liste
+              const visitsList = document.querySelector('.visits-list');
+              if (visitsList && payload.new.page_path) {
+                const time = new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+                const pageName = payload.new.page_path === '/' ? 'Accueil' : payload.new.page_path;
+                const newVisit = document.createElement('div');
+                newVisit.className = 'visit-item';
+                newVisit.style.background = 'rgba(74, 222, 128, 0.1)';
+                newVisit.innerHTML = `
+                  <div class="visit-dot online"></div>
+                  <div class="visit-page">${pageName}</div>
+                  <div class="visit-time">${time}</div>
+                `;
+                visitsList.insertBefore(newVisit, visitsList.firstChild);
+                setTimeout(() => { newVisit.style.background = 'transparent'; }, 2000);
+
+                // Limiter à 20 visites
+                while (visitsList.children.length > 20) {
+                  visitsList.removeChild(visitsList.lastChild);
+                }
+              }
+            }
+          }
+        )
+        .subscribe();
+
+      // Nettoyer les visiteurs "en ligne" après 5 minutes
+      setInterval(() => {
+        recentVisitors.clear();
+        loadAnalytics().then(() => {
+          if (currentTab === 'analytics') {
+            const liveEl = document.getElementById('live-count');
+            if (liveEl) liveEl.textContent = analyticsData.online || 0;
+          }
+        });
+      }, 5 * 60 * 1000);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      init();
+      setupRealtime();
+    });
+  </script>
+</body>
+</html>

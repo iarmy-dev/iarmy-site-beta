@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Conditions d'Utilisation - iArmy</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23FF6B35'/><text x='50' y='68' font-family='Arial' font-size='55' font-weight='bold' fill='white' text-anchor='middle'>i</text></svg>">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Inter', sans-serif; margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #030303; color: white; min-height: 100vh; overflow-x: hidden; }
+    .bg-gradient-animate { background: linear-gradient(135deg, #030303 0%, #0a0508 25%, #050808 50%, #080805 75%, #030303 100%); background-size: 400% 400%; animation: gradientShift 20s ease infinite; }
+    @keyframes gradientShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+
+    .orb { position: fixed; border-radius: 50%; filter: blur(100px); animation: float 15s ease-in-out infinite; pointer-events: none; z-index: 0; }
+    .orb-1 { width: 500px; height: 500px; background: linear-gradient(135deg, #FF6B35, #FF8B5E); top: -250px; right: -150px; opacity: 0.15; }
+    .orb-2 { width: 400px; height: 400px; background: linear-gradient(135deg, #6B35FF, #8B5EFF); bottom: -200px; left: -150px; opacity: 0.12; animation-delay: -7s; }
+    @keyframes float { 0%, 100% { transform: translate(0, 0) scale(1); } 33% { transform: translate(30px, -30px) scale(1.05); } 66% { transform: translate(-20px, 20px) scale(0.95); } }
+
+    .glass { background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.05); }
+    .logo-i { width: 40px; height: 40px; background: linear-gradient(135deg, #FF6B35 0%, #FF8B5E 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 20px; transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); cursor: pointer; }
+    .logo-i:hover { transform: scale(1.2) rotate(-15deg); box-shadow: 0 12px 40px rgba(255,107,53,0.6); }
+
+    .nav-user-section { display: flex; align-items: center; gap: 12px; }
+    .nav-profile { display: flex; align-items: center; gap: 10px; padding: 8px 16px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; text-decoration: none; color: white; font-weight: 500; }
+    .nav-profile:hover { background: rgba(255,255,255,0.08); }
+    .nav-avatar { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; border: 2px solid rgba(255,107,53,0.3); }
+    .btn-login { padding: 10px 20px; background: linear-gradient(135deg, #FF6B35, #FF8B5E); border: none; border-radius: 10px; color: white; font-weight: 600; font-size: 14px; cursor: pointer; transition: all 0.3s; text-decoration: none; }
+    .btn-login:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(255,107,53,0.4); }
+
+    .page-container { max-width: 800px; margin: 0 auto; padding: 100px 20px 40px; position: relative; z-index: 10; }
+
+    .content-card { background: rgba(255,255,255,0.03); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.06); border-radius: 24px; padding: 40px; }
+
+    h1 { font-size: 28px; font-weight: 700; margin-bottom: 8px; background: linear-gradient(135deg, #FF6B35, #FF8B5E); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .subtitle { font-size: 14px; color: rgba(255,255,255,0.5); margin-bottom: 32px; }
+
+    h2 { font-size: 18px; font-weight: 600; margin-top: 32px; margin-bottom: 16px; color: #FF8B5E; }
+    h2:first-of-type { margin-top: 0; }
+
+    p, li { font-size: 14px; line-height: 1.7; color: rgba(255,255,255,0.7); margin-bottom: 12px; }
+
+    ul { padding-left: 20px; margin-bottom: 16px; }
+    li { margin-bottom: 8px; }
+
+    a { color: #FF6B35; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .highlight { background: rgba(255,107,53,0.1); border-left: 3px solid #FF6B35; padding: 16px 20px; border-radius: 0 12px 12px 0; margin: 20px 0; }
+    .highlight p { margin-bottom: 0; }
+
+    footer a { color: rgba(255,255,255,0.4); text-decoration: none; transition: color 0.2s; }
+    footer a:hover { color: #FF8B5E; }
+  </style>
+</head>
+<body class="bg-gradient-animate">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+
+  <nav class="glass" style="position: fixed; top: 0; left: 0; right: 0; z-index: 50;">
+    <div style="max-width: 800px; margin: 0 auto; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between;">
+      <a href="../" style="display: flex; align-items: center; gap: 12px; text-decoration: none; color: white;">
+        <div class="logo-i">i</div>
+        <span style="font-weight: 600; font-size: 18px;">iArmy</span>
+      </a>
+      <div id="auth-buttons"></div>
+    </div>
+  </nav>
+
+  <div class="page-container">
+    <div class="content-card">
+      <h1>Conditions d'Utilisation</h1>
+      <p class="subtitle">Derniere mise a jour : Janvier 2026</p>
+
+      <h2>1. Acceptation des conditions</h2>
+      <p>En utilisant iArmy, vous acceptez les presentes conditions d'utilisation. Si vous n'acceptez pas ces conditions, veuillez ne pas utiliser le service.</p>
+
+      <h2>2. Description du service</h2>
+      <p>iArmy est un service d'automatisation qui permet de :</p>
+      <ul>
+        <li>Connecter vos applications (Telegram, Google Sheets)</li>
+        <li>Transmettre des donnees entre ces applications</li>
+        <li>Automatiser la saisie de donnees comptables et operationnelles</li>
+      </ul>
+
+      <div class="highlight">
+        <p><strong>En resume :</strong> iArmy simplifie votre quotidien en automatisant le lien entre vos outils. Vous gardez le controle total de vos donnees - elles restent dans vos propres comptes.</p>
+      </div>
+
+      <h2>3. Inscription et compte</h2>
+      <ul>
+        <li>Vous devez fournir des informations exactes lors de l'inscription</li>
+        <li>Vous etes responsable de la securite de votre compte</li>
+        <li>Un compte est strictement personnel et non transferable</li>
+        <li>Vous devez avoir au moins 18 ans pour utiliser le service</li>
+      </ul>
+
+      <h2>4. Utilisation acceptable</h2>
+      <p>Vous vous engagez a :</p>
+      <ul>
+        <li>Utiliser le service conformement aux lois en vigueur</li>
+        <li>Ne pas tenter de contourner les mesures de securite</li>
+        <li>Ne pas utiliser le service pour des activites illegales</li>
+        <li>Ne pas surcharger intentionnellement nos serveurs</li>
+        <li>Respecter les limites d'utilisation de votre abonnement</li>
+      </ul>
+
+      <h2>5. Abonnements et paiements</h2>
+      <ul>
+        <li><strong>Essai gratuit</strong> : 7 jours pour tester le service sans engagement</li>
+        <li>Les tarifs sont indiques sur notre site</li>
+        <li>Les paiements sont mensuels et recurrents</li>
+        <li>Vous pouvez annuler a tout moment depuis votre compte</li>
+        <li>Aucun remboursement pour les periodes entamees</li>
+        <li>Les prix peuvent etre modifies avec un preavis de 30 jours</li>
+      </ul>
+
+      <h2>6. Vos donnees et stockage</h2>
+      <div class="highlight">
+        <p><strong>iArmy ne stocke pas vos donnees.</strong> Nous sommes un intermediaire : vos donnees transitent par notre service puis sont enregistrees directement dans vos propres applications (Google Sheets, etc.).</p>
+      </div>
+      <ul>
+        <li>Vos donnees restent votre propriete</li>
+        <li>Le stockage se fait dans VOS comptes (Google Drive, Telegram)</li>
+        <li>Vous etes responsable de la gestion de vos espaces de stockage</li>
+        <li>Nous ne faisons qu'automatiser le lien entre vos services</li>
+        <li>Consultez notre <a href="../privacy/">Politique de Confidentialite</a> pour plus de details</li>
+      </ul>
+
+      <h2>7. Disponibilite du service</h2>
+      <ul>
+        <li>Nous nous efforcons d'assurer une disponibilite maximale</li>
+        <li>Des interruptions pour maintenance peuvent survenir</li>
+        <li>Nous ne garantissons pas une disponibilite de 100%</li>
+        <li>En cas de probleme majeur, nous vous informerons par email ou Telegram</li>
+      </ul>
+
+      <h2>8. Limitation de responsabilite</h2>
+      <p>En tant qu'intermediaire de transmission :</p>
+      <ul>
+        <li>iArmy est fourni "tel quel"</li>
+        <li>Nous ne sommes pas responsables du contenu que vous transmettez</li>
+        <li>Nous ne sommes pas responsables des donnees stockees dans vos applications tierces</li>
+        <li>Nous ne sommes pas responsables des erreurs de saisie ou d'interpretation</li>
+        <li>Vous restez seul responsable de vos espaces de stockage (Google Drive, etc.)</li>
+        <li>Notre responsabilite est limitee au montant de votre abonnement mensuel</li>
+      </ul>
+
+      <h2>9. Propriete intellectuelle</h2>
+      <p>Le nom iArmy, le logo, et l'ensemble du contenu du site sont proteges. Toute reproduction sans autorisation est interdite.</p>
+
+      <h2>10. Resiliation</h2>
+      <ul>
+        <li>Vous pouvez supprimer votre compte a tout moment</li>
+        <li>Nous pouvons suspendre un compte en cas de violation des conditions</li>
+        <li>En cas de resiliation, vos donnees sont supprimees sous 30 jours</li>
+      </ul>
+
+      <h2>11. Modifications</h2>
+      <p>Ces conditions peuvent etre modifiees. En cas de changement important, nous vous informerons par email. L'utilisation continue du service vaut acceptation des nouvelles conditions.</p>
+
+      <h2>12. Droit applicable</h2>
+      <p>Ces conditions sont regies par le droit luxembourgeois. Tout litige sera soumis aux tribunaux competents du Luxembourg.</p>
+
+      <h2>13. Contact</h2>
+      <p>Pour toute question : <a href="mailto:support@iarmy.fr">support@iarmy.fr</a></p>
+    </div>
+  </div>
+
+  <footer style="padding: 32px 20px; background: rgba(0,0,0,0.3); border-top: 1px solid rgba(255,255,255,0.05); margin-top: 32px;">
+    <div style="display: flex; justify-content: center; gap: 24px; font-size: 14px;">
+      <a href="../">Accueil</a>
+      <a href="../compte/">Compte</a>
+      <a href="../privacy/">Confidentialite</a>
+      <a href="./">CGU</a>
+      <a href="mailto:support@iarmy.fr">Contact</a>
+    </div>
+    <p style="color: rgba(255,255,255,0.25); font-size: 12px; text-align: center; margin-top: 12px;">© 2026 iArmy</p>
+  </footer>
+
+  <script>
+    const SUPABASE_URL = 'https://byqfnpdcnifauhwgetcq.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ5cWZucGRjbmlmYXVod2dldGNxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc4ODY1MTIsImV4cCI6MjA4MzQ2MjUxMn0.1W2OaRb0sApMvrG_28AoV2zUFAzrptzpwbR1c65tOPo';
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    async function init() {
+      const { data: { session } } = await supabaseClient.auth.getSession();
+
+      if (session) {
+        const user = session.user;
+        const userName = user.user_metadata?.full_name || user.user_metadata?.name || user.email?.split('@')[0] || 'Utilisateur';
+        const userAvatar = user.user_metadata?.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(userName)}&background=FF6B35&color=fff`;
+        const firstName = userName.split(' ')[0];
+
+        document.getElementById('auth-buttons').innerHTML = `
+          <div class="nav-user-section">
+            <a href="../compte/" class="nav-profile">
+              <img src="${userAvatar}" class="nav-avatar">
+              <span>${firstName}</span>
+            </a>
+          </div>
+        `;
+      } else {
+        document.getElementById('auth-buttons').innerHTML = `
+          <a href="../" class="btn-login">Connexion</a>
+        `;
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+  <script src="../js/analytics.js"></script>
+</body>
+</html>

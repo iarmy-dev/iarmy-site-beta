@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mon Compte - iArmy</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23FF6B35'/><text x='50' y='68' font-family='Arial' font-size='55' font-weight='bold' fill='white' text-anchor='middle'>i</text></svg>">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Inter', sans-serif; margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #030303; color: white; min-height: 100vh; overflow-x: hidden; }
+    .bg-gradient-animate { background: linear-gradient(135deg, #030303 0%, #0a0508 25%, #050808 50%, #080805 75%, #030303 100%); background-size: 400% 400%; animation: gradientShift 20s ease infinite; }
+    @keyframes gradientShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+
+    .orb { position: fixed; border-radius: 50%; filter: blur(100px); animation: float 15s ease-in-out infinite; pointer-events: none; z-index: 0; }
+    .orb-1 { width: 500px; height: 500px; background: linear-gradient(135deg, #FF6B35, #FF8B5E); top: -250px; right: -150px; opacity: 0.15; }
+    .orb-2 { width: 400px; height: 400px; background: linear-gradient(135deg, #6B35FF, #8B5EFF); bottom: -200px; left: -150px; opacity: 0.12; animation-delay: -7s; }
+    @keyframes float { 0%, 100% { transform: translate(0, 0) scale(1); } 33% { transform: translate(30px, -30px) scale(1.05); } 66% { transform: translate(-20px, 20px) scale(0.95); } }
+
+    .glass { background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.05); }
+    .logo-i { width: 40px; height: 40px; background: linear-gradient(135deg, #FF6B35 0%, #FF8B5E 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 20px; transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); cursor: pointer; }
+    .logo-i:hover { transform: scale(1.2) rotate(-15deg); box-shadow: 0 12px 40px rgba(255,107,53,0.6); }
+
+    .nav-user-section { display: flex; align-items: center; gap: 12px; }
+    .nav-profile { display: flex; align-items: center; gap: 10px; padding: 8px 16px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; text-decoration: none; color: white; font-weight: 500; }
+    .nav-profile:hover { background: rgba(255,255,255,0.08); }
+    .nav-avatar { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; border: 2px solid rgba(255,107,53,0.3); }
+    .btn-logout { background: none; border: none; padding: 6px; cursor: pointer; color: rgba(255,255,255,0.3); transition: all 0.2s; display: flex; align-items: center; border-radius: 6px; }
+    .btn-logout:hover { background: rgba(239,68,68,0.1); color: #ef4444; }
+
+    .page-container { max-width: 640px; margin: 0 auto; padding: 90px 20px 30px; position: relative; z-index: 10; }
+
+    .main-card { background: rgba(255,255,255,0.03); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.06); border-radius: 24px; padding: 28px 24px; text-align: center; }
+
+    .profile-box { display: flex; flex-direction: column; align-items: center; margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+    .profile-avatar { width: 72px; height: 72px; border-radius: 50%; object-fit: cover; border: 3px solid rgba(255,107,53,0.4); margin-bottom: 14px; }
+    .profile-name { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
+    .profile-email { font-size: 14px; color: rgba(255,255,255,0.5); }
+
+    /* Tab navigation */
+    .tab-nav { display: flex; gap: 8px; margin-bottom: 24px; justify-content: center; }
+    .tab-btn { padding: 10px 24px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; color: rgba(255,255,255,0.6); font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.2s; }
+    .tab-btn:hover { background: rgba(255,255,255,0.08); color: white; }
+    .tab-btn.active { background: rgba(255,107,53,0.15); border-color: rgba(255,107,53,0.3); color: #FF6B35; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    .section-title { font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.4); margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+    .modules-grid { display: flex; gap: 16px; margin-bottom: 28px; justify-content: center; flex-wrap: wrap; }
+    .module-card { width: 140px; height: 140px; background: linear-gradient(135deg, rgba(255,107,53,0.1) 0%, rgba(255,107,53,0.02) 100%); border: 1px solid rgba(255,107,53,0.25); border-radius: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-decoration: none; color: white; transition: all 0.3s; padding: 16px; }
+    .module-card:hover { transform: translateY(-4px); border-color: rgba(255,107,53,0.5); box-shadow: 0 12px 30px rgba(255,107,53,0.2); }
+
+    .module-anim { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+    .module-anim svg { width: 32px; height: 32px; }
+    .logo-tg { animation: pulseTg 2s ease-in-out infinite; }
+    @keyframes pulseTg { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+    .pulse-dot { width: 5px; height: 5px; background: #FF6B35; border-radius: 50%; animation: pulseDot 1.5s ease-in-out infinite; }
+    .pulse-dot:nth-child(2) { animation-delay: 0.2s; }
+    .pulse-dot:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes pulseDot { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
+    .logo-sheet { animation: pulseSheet 2s ease-in-out infinite; }
+    @keyframes pulseSheet { 0%, 40%, 100% { transform: scale(1); } 70% { transform: scale(1.1); } }
+
+    .module-name { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
+    .module-badge { font-size: 11px; padding: 4px 12px; background: rgba(34,197,94,0.15); color: #4ade80; border-radius: 12px; font-weight: 600; }
+    .module-badge.inactive { background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.4); }
+
+    .module-card.soon { background: rgba(255,255,255,0.02); border-color: rgba(255,255,255,0.06); opacity: 0.4; pointer-events: none; }
+    .module-card.soon .module-anim { opacity: 0.3; }
+
+    /* Subscription card */
+    .subscription-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 16px; padding: 20px; text-align: left; }
+    .subscription-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+    .subscription-icon { width: 40px; height: 40px; background: linear-gradient(135deg, rgba(255,107,53,0.2), rgba(255,107,53,0.05)); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+    .subscription-info h3 { font-size: 16px; font-weight: 600; margin-bottom: 2px; }
+    .subscription-info p { font-size: 12px; color: rgba(255,255,255,0.5); }
+    .subscription-details { display: flex; flex-direction: column; gap: 12px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.06); }
+    .subscription-row { display: flex; justify-content: space-between; align-items: center; }
+    .subscription-label { font-size: 13px; color: rgba(255,255,255,0.5); }
+    .subscription-value { font-size: 13px; font-weight: 500; }
+    .subscription-value.free { color: #4ade80; }
+    .btn-manage { margin-top: 16px; width: 100%; padding: 12px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; color: rgba(255,255,255,0.6); font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s; }
+    .btn-manage:hover { background: rgba(255,255,255,0.08); color: white; }
+    .btn-manage:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn-subscribe { margin-top: 16px; width: 100%; padding: 14px; background: linear-gradient(135deg, #FF6B35, #FF8B5E); border: none; border-radius: 10px; color: white; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.3s; }
+    .btn-subscribe:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(255,107,53,0.4); }
+    .btn-subscribe:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+    .status-badge { display: inline-block; padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: 600; }
+    .status-badge.active { background: rgba(34,197,94,0.15); color: #4ade80; }
+    .status-badge.trialing { background: rgba(59,130,246,0.15); color: #60a5fa; }
+    .status-badge.tester { background: rgba(168,85,247,0.15); color: #c084fc; }
+    .status-badge.canceled { background: rgba(239,68,68,0.15); color: #f87171; }
+    .status-badge.past_due { background: rgba(245,158,11,0.15); color: #fbbf24; }
+    .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); padding: 12px 24px; background: rgba(34,197,94,0.9); color: white; border-radius: 12px; font-size: 14px; font-weight: 500; z-index: 1000; animation: slideUp 0.3s ease; }
+    .toast.error { background: rgba(239,68,68,0.9); }
+    @keyframes slideUp { from { opacity: 0; transform: translateX(-50%) translateY(20px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
+
+    .info-row { display: flex; gap: 12px; margin-bottom: 24px; justify-content: center; flex-wrap: wrap; }
+    .info-box { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 24px; padding: 10px 18px; display: flex; align-items: center; gap: 8px; }
+    .info-box.active { border-color: rgba(34,197,94,0.25); }
+    .info-icon { font-size: 14px; }
+    .info-label { font-size: 13px; color: rgba(255,255,255,0.5); }
+    .info-status { font-size: 13px; color: #4ade80; font-weight: 600; }
+    .info-status.pending { color: rgba(255,255,255,0.3); }
+
+    /* Notifications */
+    .notif-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 16px; padding: 4px 0; }
+    .notif-row { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; border-bottom: 1px solid rgba(255,255,255,0.04); }
+    .notif-row:last-of-type { border-bottom: none; }
+    .notif-info { display: flex; align-items: center; gap: 12px; }
+    .notif-icon { font-size: 18px; }
+    .notif-label { font-size: 14px; font-weight: 500; }
+    .notif-desc { font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 2px; }
+    .notif-note { display: flex; align-items: center; gap: 8px; padding: 12px 18px; font-size: 12px; color: rgba(255,255,255,0.5); background: rgba(255,107,53,0.05); border-top: 1px solid rgba(255,255,255,0.04); border-radius: 0 0 16px 16px; }
+
+    /* Toggle switch */
+    .toggle { position: relative; display: inline-block; width: 44px; height: 24px; }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.1); transition: 0.3s; border-radius: 24px; }
+    .toggle-slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background: rgba(255,255,255,0.5); transition: 0.3s; border-radius: 50%; }
+    .toggle input:checked + .toggle-slider { background: rgba(255,107,53,0.6); }
+    .toggle input:checked + .toggle-slider:before { transform: translateX(20px); background: #FF6B35; }
+    .toggle input:disabled + .toggle-slider { opacity: 0.4; cursor: not-allowed; }
+
+    /* Objective input */
+    .objective-input-row { padding: 12px 18px; background: rgba(255,107,53,0.05); border-top: 1px solid rgba(255,255,255,0.04); }
+    .objective-input-wrapper { display: flex; align-items: center; gap: 8px; max-width: 160px; margin-left: auto; }
+    .objective-input-wrapper input { flex: 1; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 8px 12px; color: white; font-size: 14px; text-align: right; width: 100px; }
+    .objective-input-wrapper input:focus { outline: none; border-color: rgba(255,107,53,0.5); }
+    .objective-input-wrapper input::placeholder { color: rgba(255,255,255,0.3); }
+    .objective-currency { color: rgba(255,255,255,0.5); font-size: 14px; font-weight: 500; }
+
+    footer a { color: rgba(255,255,255,0.4); text-decoration: none; transition: color 0.2s; }
+    footer a:hover { color: #FF8B5E; }
+
+    /* Profile edit */
+    .profile-edit-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 16px; padding: 20px; margin-bottom: 24px; }
+    .profile-edit-row { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; }
+    .profile-edit-row:last-child { margin-bottom: 0; }
+    .profile-edit-avatar { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid rgba(255,107,53,0.3); }
+    .profile-edit-info { flex: 1; }
+    .profile-edit-label { font-size: 12px; color: rgba(255,255,255,0.4); margin-bottom: 4px; }
+    .profile-edit-value { font-size: 14px; font-weight: 500; }
+    .profile-edit-input { width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: white; font-size: 14px; }
+    .profile-edit-input:focus { outline: none; border-color: rgba(255,107,53,0.5); }
+    .btn-save-profile { padding: 10px 20px; background: linear-gradient(135deg, #FF6B35, #FF8B5E); border: none; border-radius: 8px; color: white; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+    .btn-save-profile:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(255,107,53,0.3); }
+    .btn-save-profile:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .profile-note { font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 12px; }
+
+    /* Danger zone */
+    .danger-card { background: rgba(239,68,68,0.05); border: 1px solid rgba(239,68,68,0.15); border-radius: 16px; padding: 4px 0; }
+    .danger-row { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; }
+    .danger-info { display: flex; align-items: center; gap: 12px; }
+    .danger-icon { font-size: 18px; }
+    .danger-label { font-size: 14px; font-weight: 500; color: #f87171; }
+    .danger-desc { font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 2px; }
+    .btn-danger { padding: 8px 16px; background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); border-radius: 8px; color: #f87171; font-size: 12px; font-weight: 500; cursor: pointer; transition: all 0.2s; }
+    .btn-danger:hover { background: rgba(239,68,68,0.2); border-color: rgba(239,68,68,0.5); }
+
+    /* Modal */
+    .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(4px); z-index: 100; display: flex; align-items: center; justify-content: center; padding: 20px; }
+    .modal-box { background: #1a1a1a; border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 28px; max-width: 400px; width: 100%; text-align: center; }
+    .modal-box h3 { font-size: 18px; font-weight: 600; margin-bottom: 12px; color: #f87171; }
+    .modal-box p { font-size: 14px; color: rgba(255,255,255,0.6); line-height: 1.5; }
+    .modal-actions { display: flex; gap: 12px; margin-top: 24px; }
+    .btn-cancel { flex: 1; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; color: rgba(255,255,255,0.7); font-size: 14px; font-weight: 500; cursor: pointer; }
+    .btn-cancel:hover { background: rgba(255,255,255,0.1); }
+    .btn-confirm-delete { flex: 1; padding: 12px; background: #ef4444; border: none; border-radius: 10px; color: white; font-size: 14px; font-weight: 600; cursor: pointer; }
+    .btn-confirm-delete:hover { background: #dc2626; }
+  </style>
+</head>
+<body class="bg-gradient-animate">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+
+  <nav class="glass" style="position: fixed; top: 0; left: 0; right: 0; z-index: 50;">
+    <div style="max-width: 640px; margin: 0 auto; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between;">
+      <a href="../" style="display: flex; align-items: center; gap: 12px; text-decoration: none; color: white;">
+        <div class="logo-i">i</div>
+        <span style="font-weight: 600; font-size: 18px;">iArmy</span>
+      </a>
+      <div id="auth-buttons"></div>
+    </div>
+  </nav>
+
+  <div class="page-container">
+    <div class="main-card">
+      <!-- Profile -->
+      <div class="profile-box">
+        <img id="profile-avatar" class="profile-avatar" src="" alt="">
+        <div class="profile-name" id="profile-name">-</div>
+        <div class="profile-email" id="profile-email">-</div>
+      </div>
+
+      <!-- Tab Navigation -->
+      <div class="tab-nav">
+        <button class="tab-btn active" data-tab="abonnement">Abonnement</button>
+        <button class="tab-btn" data-tab="parametres">Parametres</button>
+      </div>
+
+      <!-- Abonnement Tab -->
+      <div id="tab-abonnement" class="tab-content active">
+        <!-- Modules -->
+        <div class="section-title">Modules actifs</div>
+        <div class="modules-grid">
+          <a href="../modules/compta/" class="module-card">
+            <div class="module-anim">
+              <div class="logo-tg">
+                <svg viewBox="0 0 240 240"><defs><linearGradient id="tg" x1="50%" y1="0%" x2="50%" y2="100%"><stop offset="0%" stop-color="#2AABEE"/><stop offset="100%" stop-color="#229ED9"/></linearGradient></defs><circle cx="120" cy="120" r="120" fill="url(#tg)"/><path fill="#fff" d="M81.229 128.772l14.237 39.406s1.78 3.687 3.686 3.687 30.255-29.492 30.255-29.492l31.525-60.89L81.737 118.6z"/><path fill="#d2e4ef" d="M100.106 138.878l-2.733 29.046s-1.144 8.9 7.754 0 17.415-15.763 17.415-15.763"/><path fill="#b5cfe4" d="M81.486 130.178l-17.8-5.467s-2.006-.808-1.366-2.671c.143-.42.522-.72 1.773-1.5 5.912-3.686 108.297-41.223 108.297-41.223s1.928-.6 3.277-.138c.897.306 1.377 1.152 1.377 1.152.118.58.138 1.368.138 2.14 0 .663-.06 1.41-.06 2.292-.469 8.312-14.237 90.178-14.237 90.178s-.803 3.262-3.686 3.372c-1.99.067-5.104-1.29-6.897-2.352-1.467-.874-27.523-17.598-37.06-25.67-.832-.704-1.68-2.026-.06-3.63 3.673-3.64 8.047-8.047 17.05-16.5 2.006-1.89 4.032-6.297-4.365-1.072l-23.27 15.555s-2.667 1.654-7.617.18z"/></svg>
+              </div>
+              <div class="pulse-dot"></div>
+              <div class="pulse-dot"></div>
+              <div class="pulse-dot"></div>
+              <div class="logo-sheet">
+                <svg viewBox="0 0 56 56"><defs><linearGradient id="sh" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#0f9d58"/><stop offset="100%" stop-color="#0a7e3e"/></linearGradient></defs><rect x="8" y="8" width="40" height="40" rx="6" fill="url(#sh)"/><line x1="12" y1="20" x2="44" y2="20" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/><line x1="12" y1="28" x2="44" y2="28" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/><line x1="12" y1="36" x2="44" y2="36" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/><line x1="22" y1="12" x2="22" y2="44" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/><line x1="34" y1="12" x2="34" y2="44" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/></svg>
+              </div>
+            </div>
+            <div class="module-name">Compta Express</div>
+            <span class="module-badge" id="compta-badge">Actif</span>
+          </a>
+          <div class="module-card soon">
+            <div class="module-anim">
+              <div style="font-size: 32px;">👥</div>
+            </div>
+            <div class="module-name">Personnel</div>
+            <span class="module-badge inactive">Bientot</span>
+          </div>
+        </div>
+
+        <!-- Subscription Info -->
+        <div class="subscription-card" id="subscription-card">
+          <div class="subscription-header">
+            <div class="subscription-icon">💎</div>
+            <div class="subscription-info">
+              <h3>Mon abonnement</h3>
+              <p>Gere ton forfait et ta facturation</p>
+            </div>
+          </div>
+          <div class="subscription-details">
+            <div class="subscription-row">
+              <span class="subscription-label">Statut</span>
+              <span id="subscription-status" class="status-badge">Chargement...</span>
+            </div>
+            <div class="subscription-row">
+              <span class="subscription-label">Module Compta</span>
+              <span class="subscription-value" id="compta-status">-</span>
+            </div>
+            <div class="subscription-row" id="next-billing-row" style="display: none;">
+              <span class="subscription-label">Prochaine facture</span>
+              <span class="subscription-value" id="next-billing">-</span>
+            </div>
+            <div class="subscription-row" id="trial-ends-row" style="display: none;">
+              <span class="subscription-label">Fin de l'essai</span>
+              <span class="subscription-value" id="trial-ends" style="color: #60a5fa;">-</span>
+            </div>
+          </div>
+          <button class="btn-subscribe" id="btn-subscribe" onclick="startCheckout('compta')" style="display: none;">
+            S'abonner - 39€/mois
+          </button>
+          <p id="trial-note" style="display: none; margin-top: 12px; font-size: 12px; color: rgba(255,255,255,0.5); text-align: center;">
+            7 jours d'essai gratuit inclus
+          </p>
+        </div>
+      </div>
+
+      <!-- Parametres Tab -->
+      <div id="tab-parametres" class="tab-content">
+        <!-- Profile Edit -->
+        <div class="section-title">Mon profil</div>
+        <div class="profile-edit-card">
+          <div class="profile-edit-row">
+            <img id="edit-avatar" class="profile-edit-avatar" src="" alt="">
+            <div class="profile-edit-info">
+              <div class="profile-edit-label">Nom affiche</div>
+              <input type="text" id="edit-name" class="profile-edit-input" placeholder="Ton nom">
+            </div>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 16px;">
+            <p class="profile-note">La photo vient de ton compte Google</p>
+            <button class="btn-save-profile" onclick="saveProfile()" id="btn-save-profile" disabled>Enregistrer</button>
+          </div>
+        </div>
+
+        <!-- Connexions -->
+        <div class="section-title">Connexions</div>
+        <div class="info-row">
+          <div class="info-box active">
+            <span class="info-icon">🔗</span>
+            <span class="info-label">Google</span>
+            <span class="info-status">✓</span>
+          </div>
+          <div class="info-box" id="telegram-conn">
+            <span class="info-icon">📱</span>
+            <span class="info-label">Telegram</span>
+            <span class="info-status pending" id="telegram-status">-</span>
+          </div>
+          <div class="info-box" id="sheet-conn">
+            <span class="info-icon">📊</span>
+            <span class="info-label">Sheets</span>
+            <span class="info-status pending" id="sheet-status">-</span>
+          </div>
+        </div>
+
+        <!-- Danger Zone -->
+        <div class="section-title" style="margin-top: 28px; color: rgba(239,68,68,0.6);">Zone danger</div>
+        <div class="danger-card">
+          <div class="danger-row">
+            <div class="danger-info">
+              <div class="danger-icon">🗑️</div>
+              <div>
+                <div class="danger-label">Supprimer mon compte</div>
+                <div class="danger-desc">Supprime definitivement ton compte et toutes tes donnees</div>
+              </div>
+            </div>
+            <button class="btn-danger" onclick="confirmDeleteAccount()">Supprimer</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Account Modal -->
+  <div id="delete-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-box">
+      <h3>Supprimer ton compte ?</h3>
+      <p>Cette action est irreversible. Toutes tes donnees seront supprimees.</p>
+      <p style="margin-top: 12px; font-size: 12px; color: rgba(255,255,255,0.5);">Tes Google Sheets ne seront pas affectes.</p>
+      <div class="modal-actions">
+        <button class="btn-cancel" onclick="closeDeleteModal()">Annuler</button>
+        <button class="btn-confirm-delete" onclick="deleteAccount()">Oui, supprimer</button>
+      </div>
+    </div>
+  </div>
+
+  <footer style="padding: 32px 20px; background: rgba(0,0,0,0.3); border-top: 1px solid rgba(255,255,255,0.05); margin-top: 32px;">
+    <div style="display: flex; justify-content: center; gap: 24px; font-size: 14px;">
+      <a href="../">Accueil</a>
+      <a href="./">Compte</a>
+      <a href="../privacy/">Confidentialite</a>
+      <a href="../cgu/">CGU</a>
+      <a href="mailto:support@iarmy.fr">Contact</a>
+    </div>
+    <p style="color: rgba(255,255,255,0.25); font-size: 12px; text-align: center; margin-top: 12px;">© 2026 iArmy</p>
+  </footer>
+
+  <script>
+    const SUPABASE_URL = 'https://byqfnpdcnifauhwgetcq.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ5cWZucGRjbmlmYXVod2dldGNxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc4ODY1MTIsImV4cCI6MjA4MzQ2MjUxMn0.1W2OaRb0sApMvrG_28AoV2zUFAzrptzpwbR1c65tOPo';
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    let currentUser = null;
+
+    // Tab switching
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+      });
+    });
+
+    // Check URL params for success/canceled
+    function checkUrlParams() {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('success') === '1') {
+        showToast('Abonnement active avec succes !');
+        window.history.replaceState({}, '', window.location.pathname);
+      } else if (params.get('canceled') === '1') {
+        showToast('Paiement annule', true);
+        window.history.replaceState({}, '', window.location.pathname);
+      }
+    }
+
+    function showToast(message, isError = false) {
+      const toast = document.createElement('div');
+      toast.className = 'toast' + (isError ? ' error' : '');
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 4000);
+    }
+
+    async function init() {
+      checkUrlParams();
+
+      const { data: { session } } = await supabaseClient.auth.getSession();
+      if (!session) { window.location.href = '../'; return; }
+
+      const user = session.user;
+      currentUser = user;
+      const userName = user.user_metadata?.full_name || user.user_metadata?.name || user.email?.split('@')[0] || 'Utilisateur';
+      const userAvatar = user.user_metadata?.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(userName)}&background=FF6B35&color=fff`;
+
+      document.getElementById('profile-avatar').src = userAvatar;
+      document.getElementById('profile-name').textContent = userName;
+      document.getElementById('profile-email').textContent = user.email;
+
+      const firstName = userName.split(' ')[0];
+      document.getElementById('auth-buttons').innerHTML = `
+        <div class="nav-user-section">
+          <div class="nav-profile">
+            <img src="${userAvatar}" class="nav-avatar">
+            <span>${firstName}</span>
+          </div>
+          <button onclick="signOut()" class="btn-logout" title="Deconnexion">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          </button>
+        </div>
+      `;
+
+      await loadModuleData(user.id);
+      await loadSubscriptionData(user.id);
+      initProfileEdit(user);
+    }
+
+    let currentUserId = null;
+    let currentExcelConfig = null;
+
+    async function loadSubscriptionData(userId) {
+      try {
+        const { data: subscription } = await supabaseClient
+          .from('subscriptions')
+          .select('*')
+          .eq('user_id', userId)
+          .eq('module_name', 'compta')
+          .maybeSingle();
+
+        const statusEl = document.getElementById('subscription-status');
+        const comptaStatusEl = document.getElementById('compta-status');
+        const btnSubscribe = document.getElementById('btn-subscribe');
+        const trialNote = document.getElementById('trial-note');
+        const nextBillingRow = document.getElementById('next-billing-row');
+        const trialEndsRow = document.getElementById('trial-ends-row');
+
+        if (!subscription) {
+          // Pas d'abonnement
+          statusEl.textContent = 'Aucun abonnement';
+          statusEl.className = 'status-badge';
+          comptaStatusEl.textContent = 'Non abonne';
+          comptaStatusEl.style.color = 'rgba(255,255,255,0.4)';
+          btnSubscribe.style.display = 'block';
+          trialNote.style.display = 'block';
+        } else if (subscription.is_tester) {
+          // Testeur
+          statusEl.textContent = 'Testeur';
+          statusEl.className = 'status-badge tester';
+          comptaStatusEl.textContent = 'Acces illimite';
+          comptaStatusEl.style.color = '#c084fc';
+        } else if (subscription.status === 'trialing') {
+          // En essai
+          statusEl.textContent = 'Essai gratuit';
+          statusEl.className = 'status-badge trialing';
+          comptaStatusEl.textContent = 'Actif';
+          comptaStatusEl.style.color = '#4ade80';
+          if (subscription.trial_ends_at) {
+            trialEndsRow.style.display = 'flex';
+            document.getElementById('trial-ends').textContent = formatDate(subscription.trial_ends_at);
+          }
+        } else if (subscription.status === 'active') {
+          // Actif
+          statusEl.textContent = 'Actif';
+          statusEl.className = 'status-badge active';
+          comptaStatusEl.textContent = '39€/mois';
+          comptaStatusEl.style.color = '#4ade80';
+          if (subscription.current_period_end) {
+            nextBillingRow.style.display = 'flex';
+            document.getElementById('next-billing').textContent = formatDate(subscription.current_period_end);
+          }
+        } else if (subscription.status === 'canceled') {
+          // Annule
+          statusEl.textContent = 'Annule';
+          statusEl.className = 'status-badge canceled';
+          if (subscription.current_period_end && new Date(subscription.current_period_end) > new Date()) {
+            comptaStatusEl.textContent = 'Actif jusqu\'au ' + formatDate(subscription.current_period_end);
+            comptaStatusEl.style.color = '#fbbf24';
+          } else {
+            comptaStatusEl.textContent = 'Expire';
+            comptaStatusEl.style.color = 'rgba(255,255,255,0.4)';
+            btnSubscribe.style.display = 'block';
+            trialNote.style.display = 'none';
+            btnSubscribe.textContent = 'Se reabonner - 39€/mois';
+          }
+        } else if (subscription.status === 'past_due') {
+          // Paiement en retard
+          statusEl.textContent = 'Paiement en retard';
+          statusEl.className = 'status-badge past_due';
+          comptaStatusEl.textContent = 'A regulariser';
+          comptaStatusEl.style.color = '#fbbf24';
+        }
+      } catch (err) {
+        console.error('Error loading subscription:', err);
+        document.getElementById('subscription-status').textContent = 'Erreur';
+      }
+    }
+
+    function formatDate(dateStr) {
+      const date = new Date(dateStr);
+      return date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' });
+    }
+
+    async function startCheckout(moduleName) {
+      const btn = document.getElementById('btn-subscribe');
+      btn.disabled = true;
+      btn.textContent = 'Redirection...';
+
+      try {
+        const response = await fetch(SUPABASE_URL + '/functions/v1/stripe-checkout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            userId: currentUser.id,
+            userEmail: currentUser.email,
+            moduleName: moduleName,
+            successUrl: window.location.origin + '/compte/?success=1',
+            cancelUrl: window.location.origin + '/compte/?canceled=1'
+          })
+        });
+
+        const data = await response.json();
+        if (data.error) throw new Error(data.error);
+        if (data.url) {
+          window.location.href = data.url;
+        } else {
+          throw new Error('No checkout URL returned');
+        }
+      } catch (err) {
+        console.error('Checkout error:', err);
+        showToast('Erreur: ' + err.message, true);
+        btn.disabled = false;
+        btn.textContent = 'S\'abonner - 39€/mois';
+      }
+    }
+
+    async function loadModuleData(userId) {
+      currentUserId = userId;
+      try {
+        const { data: config } = await supabaseClient.from('module_configs').select('sheet_id, config').eq('user_id', userId).eq('module_name', 'compta').single();
+        const { data: telegramLink } = await supabaseClient.from('telegram_links').select('telegram_user_id').eq('user_id', userId).maybeSingle();
+
+        const hasTelegram = !!telegramLink?.telegram_user_id;
+
+        if (hasTelegram) {
+          document.getElementById('telegram-status').textContent = '✓';
+          document.getElementById('telegram-status').className = 'info-status';
+          document.getElementById('telegram-conn').classList.add('active');
+        }
+
+        if (config?.sheet_id) {
+          document.getElementById('sheet-status').textContent = '✓';
+          document.getElementById('sheet-status').className = 'info-status';
+          document.getElementById('sheet-conn').classList.add('active');
+          document.getElementById('sheet-conn').style.cursor = 'pointer';
+          document.getElementById('sheet-conn').onclick = () => window.open('https://docs.google.com/spreadsheets/d/' + config.sheet_id + '/edit', '_blank');
+        } else {
+          document.getElementById('compta-badge').textContent = 'A configurer';
+          document.getElementById('compta-badge').className = 'module-badge inactive';
+        }
+      } catch (err) { console.log('No config'); }
+    }
+
+    async function signOut() {
+      await supabaseClient.auth.signOut();
+      window.location.href = '../';
+    }
+
+    // Profile edit
+    let originalName = '';
+
+    function initProfileEdit(user) {
+      const userName = user.user_metadata?.full_name || user.user_metadata?.name || user.email?.split('@')[0] || '';
+      const userAvatar = user.user_metadata?.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(userName)}&background=FF6B35&color=fff`;
+
+      document.getElementById('edit-avatar').src = userAvatar;
+      document.getElementById('edit-name').value = userName;
+      originalName = userName;
+
+      document.getElementById('edit-name').addEventListener('input', () => {
+        const changed = document.getElementById('edit-name').value !== originalName;
+        document.getElementById('btn-save-profile').disabled = !changed;
+      });
+    }
+
+    async function saveProfile() {
+      const newName = document.getElementById('edit-name').value.trim();
+      if (!newName) return;
+
+      const btn = document.getElementById('btn-save-profile');
+      btn.textContent = 'Enregistrement...';
+      btn.disabled = true;
+
+      try {
+        const { error } = await supabaseClient.auth.updateUser({
+          data: { full_name: newName, name: newName }
+        });
+
+        if (error) throw error;
+
+        originalName = newName;
+        document.getElementById('profile-name').textContent = newName;
+        document.querySelector('.nav-profile span').textContent = newName.split(' ')[0];
+        btn.textContent = 'Enregistre !';
+        setTimeout(() => { btn.textContent = 'Enregistrer'; }, 2000);
+      } catch (err) {
+        console.error('Save profile error:', err);
+        btn.textContent = 'Erreur';
+        setTimeout(() => { btn.textContent = 'Enregistrer'; btn.disabled = false; }, 2000);
+      }
+    }
+
+    // Delete account
+    function confirmDeleteAccount() {
+      document.getElementById('delete-modal').style.display = 'flex';
+    }
+
+    function closeDeleteModal() {
+      document.getElementById('delete-modal').style.display = 'none';
+    }
+
+    async function deleteAccount() {
+      try {
+        // Delete user data from all tables
+        if (currentUserId) {
+          await supabaseClient.from('module_configs').delete().eq('user_id', currentUserId);
+          await supabaseClient.from('telegram_links').delete().eq('user_id', currentUserId);
+          await supabaseClient.from('google_credentials').delete().eq('user_id', currentUserId);
+        }
+
+        // Sign out (actual user deletion requires admin or edge function)
+        await supabaseClient.auth.signOut();
+        window.location.href = '../?deleted=1';
+      } catch (err) {
+        console.error('Delete error:', err);
+        alert('Erreur lors de la suppression. Contacte support@iarmy.fr');
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+  <script src="../js/analytics.js"></script>
+</body>
+</html>

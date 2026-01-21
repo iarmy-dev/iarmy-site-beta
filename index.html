@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>iArmy - Une armée de robots pour ton quotidien</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23FF6B35'/><text x='50' y='68' font-family='Arial' font-size='55' font-weight='bold' fill='white' text-anchor='middle'>i</text></svg>">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Inter', sans-serif; margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #030303; color: white; min-height: 100vh; overflow-x: hidden; }
+    .bg-gradient-animate { background: linear-gradient(135deg, #030303 0%, #0a0508 25%, #050808 50%, #080805 75%, #030303 100%); background-size: 400% 400%; animation: gradientShift 20s ease infinite; }
+    @keyframes gradientShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+    .orb { position: fixed; border-radius: 50%; filter: blur(100px); animation: float 15s ease-in-out infinite; pointer-events: none; z-index: 0; }
+    .orb-1 { width: 500px; height: 500px; background: linear-gradient(135deg, #FF6B35, #FF8B5E); top: -250px; right: -150px; opacity: 0.18; }
+    .orb-2 { width: 400px; height: 400px; background: linear-gradient(135deg, #6B35FF, #8B5EFF); bottom: -200px; left: -150px; opacity: 0.18; animation-delay: -7s; }
+    .orb-3 { width: 250px; height: 250px; background: linear-gradient(135deg, #35FFB8, #5EFFD4); top: 50%; left: 30%; opacity: 0.1; animation-delay: -3s; }
+    @keyframes float { 0%, 100% { transform: translate(0, 0) scale(1); } 33% { transform: translate(30px, -30px) scale(1.05); } 66% { transform: translate(-20px, 20px) scale(0.95); } }
+    .glass { background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.05); }
+    .logo-i { width: 40px; height: 40px; background: linear-gradient(135deg, #FF6B35 0%, #FF8B5E 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 20px; transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); cursor: pointer; }
+    .logo-i:hover { transform: scale(1.2) rotate(-15deg); box-shadow: 0 12px 40px rgba(255,107,53,0.6); }
+    .btn-primary { background: linear-gradient(135deg, #FF6B35 0%, #FF8B5E 100%); padding: 14px 28px; border-radius: 14px; font-weight: 600; transition: all 0.4s; border: none; color: white; cursor: pointer; }
+    .btn-primary:hover { transform: translateY(-4px) scale(1.02); box-shadow: 0 15px 40px rgba(255,107,53,0.5); }
+    .btn-secondary { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); padding: 12px 24px; border-radius: 12px; font-weight: 500; transition: all 0.3s; color: white; cursor: pointer; }
+    .btn-secondary:hover { background: rgba(255,255,255,0.08); }
+    .btn-logout { background: none; border: none; padding: 8px; border-radius: 8px; transition: all 0.2s; color: rgba(255,255,255,0.4); cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .btn-logout:hover { background: rgba(239,68,68,0.1); color: #ef4444; }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes floatY { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+    @keyframes glide { 0% { left: 0; opacity: 0; } 15% { opacity: 1; } 85% { opacity: 1; } 100% { left: calc(100% - 36px); opacity: 0; } }
+    .animate-fade-in-up { animation: fadeInUp 0.6s ease-out forwards; }
+    .animate-fade-in-down { animation: fadeInDown 0.5s ease-out forwards; }
+    .animate-float { animation: floatY 4s ease-in-out infinite; }
+    .delay-100 { animation-delay: 0.1s; opacity: 0; }
+    .delay-200 { animation-delay: 0.2s; opacity: 0; }
+    .delay-300 { animation-delay: 0.3s; opacity: 0; }
+    .iphone { width: 220px; background: linear-gradient(145deg, #2a2a2a, #1a1a1a); border-radius: 36px; padding: 10px; box-shadow: 0 0 0 2px rgba(255,255,255,0.1), 0 30px 60px rgba(0,0,0,0.5); }
+    .iphone-screen { background: #000; border-radius: 28px; overflow: hidden; }
+    .iphone-notch { width: 90px; height: 24px; background: #000; border-radius: 0 0 16px 16px; margin: 0 auto; }
+    .telegram-header { background: #1c1c1e; padding: 8px 12px; display: flex; align-items: center; gap: 10px; }
+    .telegram-avatar { width: 30px; height: 30px; background: linear-gradient(135deg, #FF6B35, #FF8B5E); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 12px; }
+    .telegram-name { font-size: 14px; font-weight: 600; }
+    .telegram-status { font-size: 11px; color: #0a84ff; }
+    .telegram-messages { background: #000; padding: 12px; height: 200px; display: flex; flex-direction: column; gap: 8px; }
+    .msg { max-width: 80%; padding: 8px 12px; border-radius: 18px; font-size: 13px; line-height: 1.3; opacity: 0; transform: translateY(10px); transition: all 0.3s; }
+    .msg.show { opacity: 1; transform: translateY(0); }
+    .msg-user { background: #0a84ff; align-self: flex-end; border-bottom-right-radius: 4px; }
+    .msg-bot { background: #2c2c2e; align-self: flex-start; border-bottom-left-radius: 4px; }
+    .sheet { width: 200px; background: rgba(26, 26, 26, 0.9); border-radius: 16px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.05); }
+    .sheet-header { background: #0d7a3f; padding: 10px 14px; display: flex; align-items: center; gap: 8px; }
+    .sheet-icon { width: 20px; height: 20px; background: white; border-radius: 4px; display: flex; align-items: center; justify-content: center; }
+    .sheet-title { font-size: 13px; font-weight: 500; }
+    .sheet-grid { font-size: 12px; }
+    .sheet-grid th, .sheet-grid td { padding: 8px 12px; border: 1px solid rgba(255,255,255,0.08); text-align: left; }
+    .sheet-grid th { background: rgba(255,255,255,0.03); font-weight: 500; color: rgba(255,255,255,0.5); }
+    .sheet-grid .amount { color: #4ade80; font-weight: 600; }
+    .glide-container { position: relative; width: 120px; height: 40px; }
+    .glide-line { position: absolute; top: 50%; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, rgba(255,107,53,0.1), rgba(255,107,53,0.3), rgba(255,107,53,0.1)); }
+    .glide-logo { position: absolute; top: 50%; left: 0; transform: translateY(-50%); width: 36px; height: 36px; background: linear-gradient(135deg, #FF6B35, #FF8B5E); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px; opacity: 0; box-shadow: 0 0 30px rgba(255,107,53,0.6); }
+    .glide-logo.animate { animation: glide 1.5s ease-in-out forwards; }
+    .animated-logo-ultra-simple { display: flex; align-items: center; justify-content: center; gap: 20px; height: 70px; }
+    .logo-telegram-xl { animation: pulseTelegramXL 2s ease-in-out infinite; }
+    @keyframes pulseTelegramXL { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.12); } }
+    .pulse-container { position: relative; width: 50px; height: 56px; display: flex; align-items: center; justify-content: center; }
+    .pulse-wave { position: absolute; width: 12px; height: 12px; background: linear-gradient(135deg, #FF6B35, #FF8B5E); border-radius: 50%; opacity: 0; }
+    .wave1 { animation: pulseWave 2s ease-out infinite; }
+    .wave2 { animation: pulseWave 2s ease-out infinite 0.3s; }
+    .wave3 { animation: pulseWave 2s ease-out infinite 0.6s; }
+    .wave4 { animation: pulseWave 2s ease-out infinite 0.9s; }
+    @keyframes pulseWave { 0% { left: 0; opacity: 0; } 15% { opacity: 1; } 100% { left: 40px; opacity: 0; } }
+    .logo-spreadsheet-xl { animation: pulseSpreadsheet 2s ease-in-out infinite; }
+    @keyframes pulseSpreadsheet { 0%, 30%, 100% { transform: scale(1); } 75%, 85% { transform: scale(1.1); } }
+    .cell-fill { animation-duration: 2s; animation-iteration-count: infinite; }
+    .cell-fill-1 { animation-name: fillCell1; }
+    .cell-fill-2 { animation-name: fillCell2; }
+    .cell-fill-3 { animation-name: fillCell3; }
+    .cell-fill-4 { animation-name: fillCell4; }
+    @keyframes fillCell1 { 0%, 40% { opacity: 0; } 50%, 100% { opacity: 0.9; } }
+    @keyframes fillCell2 { 0%, 45% { opacity: 0; } 55%, 100% { opacity: 0.9; } }
+    @keyframes fillCell3 { 0%, 50% { opacity: 0; } 60%, 100% { opacity: 0.9; } }
+    @keyframes fillCell4 { 0%, 55% { opacity: 0; } 65%, 100% { opacity: 0.9; } }
+    .module-card { background: linear-gradient(135deg, rgba(255,107,53,0.08) 0%, rgba(255,107,53,0.02) 100%); border: 2px solid rgba(255,107,53,0.2); border-radius: 24px; padding: 24px; min-width: 280px; max-width: 320px; transition: all 0.4s; cursor: pointer; }
+    .module-card:hover { transform: translateY(-8px) scale(1.02); border-color: rgba(255,107,53,0.4); box-shadow: 0 16px 48px rgba(255,107,53,0.3); }
+    .badge-new { background: linear-gradient(135deg, rgba(255,107,53,0.3), rgba(255,139,94,0.2)); color: #FF8B5E; border: 1px solid rgba(255,107,53,0.5); padding: 6px 14px; border-radius: 20px; font-size: 11px; font-weight: 700; text-transform: uppercase; display: inline-block; animation: badgeGlow 2s ease-in-out infinite; }
+    @keyframes badgeGlow { 0%, 100% { box-shadow: 0 0 20px rgba(255,107,53,0.4); } 50% { box-shadow: 0 0 35px rgba(255,107,53,0.7); } }
+    .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(16px); z-index: 100; opacity: 0; pointer-events: none; transition: all 0.4s ease; }
+    .modal-backdrop.active { opacity: 1; pointer-events: all; }
+    .modal-content { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9); background: rgba(15, 15, 15, 0.75); backdrop-filter: blur(50px); border: 1px solid rgba(255,255,255,0.15); border-radius: 32px; padding: 40px; width: 90%; max-width: 440px; z-index: 101; opacity: 0; pointer-events: none; transition: all 0.5s; }
+    .modal-content.active { opacity: 1; transform: translate(-50%, -50%) scale(1); pointer-events: all; }
+    .modal-close { position: absolute; top: 16px; right: 16px; width: 36px; height: 36px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s; }
+    .modal-close:hover { background: rgba(255,255,255,0.12); transform: rotate(90deg); }
+    .input-field { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 16px 18px; color: white; width: 100%; font-size: 15px; }
+    .input-field:focus { outline: none; border-color: rgba(255,107,53,0.5); }
+    .input-field::placeholder { color: rgba(255,255,255,0.3); }
+    .tab-container { display: flex; background: rgba(255,255,255,0.04); border-radius: 14px; padding: 5px; margin-bottom: 28px; position: relative; }
+    .tab-indicator { position: absolute; top: 5px; left: 5px; width: calc(50% - 5px); height: calc(100% - 10px); background: linear-gradient(135deg, #FF6B35, #FF8B5E); border-radius: 11px; transition: transform 0.3s; z-index: 0; }
+    .tab-indicator.slide-right { transform: translateX(calc(100% + 5px)); }
+    .tab-btn { flex: 1; padding: 12px; border-radius: 11px; font-size: 14px; font-weight: 600; color: rgba(255,255,255,0.5); background: transparent; border: none; cursor: pointer; z-index: 1; position: relative; }
+    .tab-btn.active { color: white; }
+    .error-msg { background: rgba(239,68,68,0.12); border: 1px solid rgba(239,68,68,0.3); border-radius: 12px; padding: 12px 16px; color: #ef4444; font-size: 13px; display: none; }
+    .error-msg.show { display: block; }
+    .robot-card { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 14px; width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; font-size: 28px; transition: all 0.3s; }
+    .robot-card:hover { background: rgba(255, 255, 255, 0.04); transform: translateY(-4px); }
+    .robot-emoji { animation: floatRobot 3s ease-in-out infinite; filter: grayscale(0.3) opacity(0.7); }
+    @keyframes floatRobot { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-8px); } }
+    .robot-plus-card { background: rgba(255, 107, 53, 0.05); border-color: rgba(255, 107, 53, 0.2); }
+    footer a { color: rgba(255,255,255,0.4); text-decoration: none; }
+    footer a:hover { color: #FF8B5E; }
+    .nav-user-section { display: flex; align-items: center; gap: 12px; }
+    .nav-profile { display: flex; align-items: center; gap: 10px; padding: 8px 16px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; text-decoration: none; color: white; font-weight: 500; }
+    .nav-profile:hover { background: rgba(255,255,255,0.08); }
+    .nav-avatar { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; border: 2px solid rgba(255,107,53,0.3); }
+    .welcome-overlay { position: fixed; inset: 0; background: rgba(3, 3, 3, 0.98); backdrop-filter: blur(30px); z-index: 10000; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.5s ease; }
+    .welcome-overlay.active { opacity: 1; pointer-events: all; }
+    .welcome-logo { width: 100px; height: 100px; background: linear-gradient(135deg, #FF6B35, #FF8B5E); border-radius: 28px; display: flex; align-items: center; justify-content: center; font-size: 52px; font-weight: 800; margin-bottom: 32px; animation: welcomePulse 2s ease-in-out infinite; }
+    @keyframes welcomePulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+    .welcome-title { font-size: 32px; font-weight: 700; margin-bottom: 12px; }
+    .welcome-subtitle { font-size: 16px; color: rgba(255, 255, 255, 0.5); margin-bottom: 40px; }
+    .welcome-dots { display: flex; gap: 12px; }
+    .welcome-dot { width: 12px; height: 12px; background: linear-gradient(135deg, #FF6B35, #FF8B5E); border-radius: 50%; animation: welcomeBounce 1.4s ease-in-out infinite; }
+    .welcome-dot:nth-child(2) { animation-delay: 0.2s; }
+    .welcome-dot:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes welcomeBounce { 0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; } 40% { transform: scale(1); opacity: 1; } }
+    @media (max-width: 768px) { .hero-demo { flex-direction: column !important; } .iphone, .sheet { width: 200px; } .module-card { min-width: 260px; } }
+  </style>
+</head>
+<body class="bg-gradient-animate">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+  
+  <div class="welcome-overlay" id="welcome-overlay">
+    <div class="welcome-logo">i</div>
+    <h1 class="welcome-title" id="welcome-title">Bienvenue !</h1>
+    <p class="welcome-subtitle" id="welcome-subtitle">Préparation de ton espace...</p>
+    <div class="welcome-dots"><div class="welcome-dot"></div><div class="welcome-dot"></div><div class="welcome-dot"></div></div>
+  </div>
+  
+  <nav class="glass fixed top-0 left-0 right-0 z-50 animate-fade-in-down">
+    <div class="max-w-3xl mx-auto px-5 py-4 flex items-center justify-between">
+      <a href="./" class="flex items-center gap-3">
+        <div class="logo-i">i</div>
+        <span class="font-semibold text-lg">iArmy</span>
+      </a>
+      <div id="auth-buttons">
+        <button onclick="openModal('login')" class="btn-secondary text-sm px-5 py-2.5 mr-2 hidden sm:inline-block">Connexion</button>
+        <button onclick="openModal('register')" class="btn-primary text-sm px-5 py-2.5">Inscription</button>
+      </div>
+    </div>
+  </nav>
+  
+  <section class="min-h-screen flex items-center justify-center px-6 pt-20 relative z-10">
+    <div class="max-w-6xl mx-auto text-center">
+      <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold mb-4 animate-fade-in-up">Une armée de robots<br>pour ton <span style="color:#FF8B5E">quotidien</span></h1>
+      <p class="text-lg md:text-xl text-white/50 mb-12 animate-fade-in-up delay-100">Gagne du temps. On s'occupe du reste.</p>
+      
+      <div class="hero-demo flex items-center justify-center gap-8 mb-12 animate-fade-in-up delay-200" style="display:flex; flex-direction:row;">
+        <div class="iphone animate-float">
+          <div class="iphone-screen">
+            <div class="iphone-notch"></div>
+            <div class="telegram-header">
+              <span style="color:#0a84ff; font-size:20px;">‹</span>
+              <div class="telegram-avatar">i</div>
+              <div class="text-left">
+                <div class="telegram-name">iArmy Bot</div>
+                <div class="telegram-status">en ligne</div>
+              </div>
+            </div>
+            <div class="telegram-messages" id="telegram-messages"></div>
+          </div>
+        </div>
+        <div class="glide-container hidden md:block">
+          <div class="glide-line"></div>
+          <div class="glide-logo" id="glide-logo">i</div>
+        </div>
+        <div class="sheet animate-float" style="animation-delay: -2s;">
+          <div class="sheet-header">
+            <div class="sheet-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="#0d7a3f"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14H6v-2h6v2zm4-4H6v-2h10v2zm0-4H6V7h10v2z"/></svg></div>
+            <span class="sheet-title">Compta 2026</span>
+          </div>
+          <table class="sheet-grid" style="width:100%">
+            <thead><tr><th>Date</th><th>Type</th><th>€</th></tr></thead>
+            <tbody id="spreadsheet-body">
+              <tr><td>08/01</td><td>CB</td><td class="amount">850</td></tr>
+              <tr><td>08/01</td><td>ESP</td><td class="amount">120</td></tr>
+              <tr id="empty-1"><td style="color:rgba(255,255,255,0.2)">-</td><td style="color:rgba(255,255,255,0.2)">-</td><td style="color:rgba(255,255,255,0.2)">-</td></tr>
+              <tr id="empty-2"><td style="color:rgba(255,255,255,0.2)">-</td><td style="color:rgba(255,255,255,0.2)">-</td><td style="color:rgba(255,255,255,0.2)">-</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      
+      <div class="animate-fade-in-up delay-300">
+        <button onclick="launchRobot()" class="btn-primary text-lg px-10 py-4">Lancer mon robot →</button>
+        <p class="text-white/30 text-sm mt-4">7 jours d'essai gratuit</p>
+      </div>
+    </div>
+  </section>
+  
+  <section class="py-20 px-6 relative z-10">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-12"><span class="text-white/30 text-sm uppercase tracking-widest">✨ Nouveau module disponible</span></div>
+      <div style="display: flex; justify-content: center;">
+        <div class="module-card" onclick="launchRobot()">
+          <div class="flex items-center gap-3 mb-4"><span class="badge-new">🎉 NOUVEAU</span></div>
+          <div style="display:flex; justify-content:center; margin-bottom:20px;">
+            <div class="animated-logo-ultra-simple">
+              <div class="logo-telegram-xl"><svg width="56" height="56" viewBox="0 0 240 240"><defs><linearGradient id="tg-grad-xl" x1="50%" x2="50%" y1="0%" y2="100%"><stop offset="0%" stop-color="#2AABEE"/><stop offset="100%" stop-color="#229ED9"/></linearGradient></defs><circle cx="120" cy="120" r="120" fill="url(#tg-grad-xl)"/><path fill="#fff" d="M81.229 128.772l14.237 39.406s1.78 3.687 3.686 3.687 30.255-29.492 30.255-29.492l31.525-60.89L81.737 118.6z"/><path fill="#d5e6f3" d="M100.106 138.878l-2.733 29.046s-1.144 8.9 7.754 0 17.415-15.763 17.415-15.763"/><path fill="#b5cfe4" d="M81.486 130.178l-17.8-5.467s-2.006-.808-1.366-2.671c.143-.42.522-.72 1.773-1.5 5.912-3.686 108.297-41.223 108.297-41.223s1.928-.6 3.277-.138a1.7 1.7 0 011.377 1.152c.118.58.138 1.368.138 2.14 0 .663-.06 1.41-.06 2.292-.469 8.312-14.237 90.178-14.237 90.178s-.803 3.262-3.686 3.372c-1.99.067-5.104-1.29-6.897-2.352-1.467-.874-27.523-17.598-37.06-25.67-.832-.704-1.68-2.026-.06-3.63 3.673-3.64 8.047-8.047 17.05-16.5 2.006-1.89 4.032-6.297-4.365-1.072l-23.27 15.555s-2.667 1.654-7.617.18c-1.69-.505-3.57-1.06-6.347-1.965-2.37-.77-4.902-1.654-4.16-3.464.488-1.222 1.41-2.24 4.838-3.532z"/></svg></div>
+              <div class="pulse-container"><div class="pulse-wave wave1"></div><div class="pulse-wave wave2"></div><div class="pulse-wave wave3"></div><div class="pulse-wave wave4"></div></div>
+              <div class="logo-spreadsheet-xl"><svg width="56" height="56" viewBox="0 0 56 56"><defs><linearGradient id="sheet-grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#0f9d58"/><stop offset="100%" stop-color="#0a7e3e"/></linearGradient></defs><rect x="8" y="8" width="40" height="40" rx="6" fill="url(#sheet-grad)"/><line x1="12" y1="20" x2="44" y2="20" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/><line x1="12" y1="28" x2="44" y2="28" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/><line x1="12" y1="36" x2="44" y2="36" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/><line x1="22" y1="12" x2="22" y2="44" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/><line x1="34" y1="12" x2="34" y2="44" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/><rect class="cell-fill cell-fill-1" x="12" y="28" width="10" height="8" fill="#4ade80" opacity="0"/><rect class="cell-fill cell-fill-2" x="22" y="28" width="12" height="8" fill="#4ade80" opacity="0"/><rect class="cell-fill cell-fill-3" x="34" y="28" width="10" height="8" fill="#4ade80" opacity="0"/><rect class="cell-fill cell-fill-4" x="12" y="36" width="10" height="8" fill="#4ade80" opacity="0"/></svg></div>
+            </div>
+          </div>
+          <h3 style="font-size:24px; font-weight:700; margin-bottom:12px; text-align:center;">Compta Express</h3>
+          <p style="color:rgba(255,255,255,0.5); font-size:14px; line-height:1.6; text-align:center; margin-bottom:16px;">Envoie tes recettes via <strong style="color:#0088cc;">Telegram</strong><br>Écrit auto dans <strong style="color:#0f9d58;">Google Sheets</strong></p>
+          <div style="text-align:center; padding:12px; background:rgba(255,255,255,0.02); border-radius:12px; border:1px solid rgba(255,255,255,0.05); margin-bottom:12px;">
+            <div style="font-size:12px; color:rgba(255,255,255,0.4); margin-bottom:4px;">Pour</div>
+            <div style="font-size:13px; color:rgba(255,255,255,0.6); font-weight:600;">Comptabilité & Finance</div>
+          </div>
+          <div style="display:flex; align-items:center; justify-content:center; gap:8px; flex-wrap:wrap;">
+            <span style="padding:4px 10px; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.06); border-radius:12px; font-size:10px; color:rgba(255,255,255,0.35);">🍕 Restaurant</span>
+            <span style="padding:4px 10px; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.06); border-radius:12px; font-size:10px; color:rgba(255,255,255,0.35);">🏪 Commerce</span>
+            <span style="padding:4px 10px; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.06); border-radius:12px; font-size:10px; color:rgba(255,255,255,0.35);">🍸 Bar</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <section class="py-12 px-6 relative z-10">
+    <div class="max-w-4xl mx-auto text-center">
+      <p style="color:rgba(255,255,255,0.5); font-size:16px; margin-bottom:24px;">D'autres modules arrivent très vite</p>
+      <div style="display:flex; align-items:center; justify-content:center; gap:16px; flex-wrap:wrap;">
+        <div class="robot-card"><span class="robot-emoji">🤖</span></div>
+        <div class="robot-card"><span class="robot-emoji">🤖</span></div>
+        <div class="robot-card"><span class="robot-emoji">🤖</span></div>
+        <div class="robot-card"><span class="robot-emoji">🤖</span></div>
+        <div class="robot-card"><span class="robot-emoji">🤖</span></div>
+        <div class="robot-card robot-plus-card"><span style="font-size:32px; color:rgba(255,255,255,0.4);">+</span></div>
+      </div>
+    </div>
+  </section>
+  
+  <footer style="padding:40px 24px; background:rgba(0,0,0,0.3); border-top:1px solid rgba(255,255,255,0.05);">
+    <div class="max-w-4xl mx-auto">
+      <div style="display:flex; flex-direction:column; align-items:center; gap:24px;">
+        <div style="display:flex; align-items:center; gap:24px; font-size:14px;">
+          <a href="./">Accueil</a>
+          <a href="compte/">Mon compte</a>
+          <a href="privacy/">Confidentialite</a>
+          <a href="cgu/">CGU</a>
+          <a href="mailto:support@iarmy.fr">Contact</a>
+        </div>
+        <p style="color:rgba(255,255,255,0.3); font-size:13px;">© 2026 iArmy</p>
+      </div>
+    </div>
+  </footer>
+  
+  <div class="modal-backdrop" id="modal-backdrop" onclick="closeModal()"></div>
+  <div class="modal-content" id="modal-content">
+    <div class="modal-close" onclick="closeModal()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></div>
+    <h2 style="font-size:24px; font-weight:700; margin-bottom:8px; text-align:center;">Bienvenue sur iArmy</h2>
+    <p style="color:rgba(255,255,255,0.5); font-size:14px; margin-bottom:28px; text-align:center;">Connecte-toi pour lancer tes robots</p>
+    <button onclick="handleGoogleAuth()" style="width:100%; background:white; color:#3c4043; border:none; border-radius:14px; padding:14px 20px; font-size:15px; font-weight:600; display:flex; align-items:center; justify-content:center; gap:12px; cursor:pointer; margin-bottom:24px; font-family:'Inter', sans-serif;">
+      <svg width="20" height="20" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+      <span>Continuer avec Google</span>
+    </button>
+    <div style="display:flex; align-items:center; gap:16px; margin-bottom:24px;">
+      <div style="flex:1; height:1px; background:rgba(255,255,255,0.1);"></div>
+      <span style="color:rgba(255,255,255,0.4); font-size:13px;">ou</span>
+      <div style="flex:1; height:1px; background:rgba(255,255,255,0.1);"></div>
+    </div>
+    <div class="tab-container">
+      <div class="tab-indicator" id="tab-indicator"></div>
+      <button class="tab-btn active" id="tab-login" onclick="switchTab('login')">Connexion</button>
+      <button class="tab-btn" id="tab-register" onclick="switchTab('register')">Inscription</button>
+    </div>
+    <div id="login-form">
+      <div class="error-msg mb-4" id="login-error"></div>
+      <form onsubmit="handleLogin(event)">
+        <input type="email" id="login-email" class="input-field mb-3" placeholder="Email" required>
+        <input type="password" id="login-password" class="input-field mb-4" placeholder="Mot de passe" required>
+        <button type="submit" class="btn-primary" style="width:100%;" id="login-btn">Se connecter</button>
+      </form>
+    </div>
+    <div id="register-form" style="display:none;">
+      <div class="error-msg mb-4" id="register-error"></div>
+      <form onsubmit="handleRegister(event)">
+        <input type="text" id="register-name" class="input-field mb-3" placeholder="Nom complet" required>
+        <input type="email" id="register-email" class="input-field mb-3" placeholder="Email" required>
+        <input type="password" id="register-password" class="input-field mb-4" placeholder="Mot de passe (6 car. min)" required minlength="6">
+        <button type="submit" class="btn-primary" style="width:100%;" id="register-btn">Créer mon compte</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const SUPABASE_URL = 'https://byqfnpdcnifauhwgetcq.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ5cWZucGRjbmlmYXVod2dldGNxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc4ODY1MTIsImV4cCI6MjA4MzQ2MjUxMn0.1W2OaRb0sApMvrG_28AoV2zUFAzrptzpwbR1c65tOPo';
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    
+    console.log('[INDEX] 🚀 Init');
+
+    function showWelcome(firstName) {
+      document.getElementById('welcome-title').textContent = `Bienvenue ${firstName} ! 👋`;
+      document.getElementById('welcome-overlay').classList.add('active');
+    }
+
+    function showLoggedInNav(user) {
+      const authButtons = document.getElementById('auth-buttons');
+      const userName = user.user_metadata?.full_name?.split(' ')[0] || user.user_metadata?.name?.split(' ')[0] || user.email?.split('@')[0] || 'Compte';
+      const userAvatar = user.user_metadata?.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(userName)}&background=FF6B35&color=fff`;
+      authButtons.innerHTML = `
+        <div class="nav-user-section">
+          <a href="compte/" class="nav-profile">
+            <img src="${userAvatar}" class="nav-avatar" alt="Avatar">
+            <span>${userName}</span>
+          </a>
+          <button onclick="signOut()" class="btn-logout" title="Déconnexion">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+              <polyline points="16 17 21 12 16 7"></polyline>
+              <line x1="21" y1="12" x2="9" y2="12"></line>
+            </svg>
+          </button>
+        </div>
+      `;
+    }
+
+    function showLoggedOutNav() {
+      const authButtons = document.getElementById('auth-buttons');
+      authButtons.innerHTML = `
+        <button onclick="openModal('login')" class="btn-secondary text-sm px-5 py-2.5 mr-2 hidden sm:inline-block">Connexion</button>
+        <button onclick="openModal('register')" class="btn-primary text-sm px-5 py-2.5">Inscription</button>
+      `;
+    }
+
+    async function handleOAuthCallback() {
+      const hasToken = window.location.hash.includes('access_token');
+      if (!hasToken) return false;
+      
+      console.log('[INDEX] 🔄 Callback OAuth détecté');
+      window.history.replaceState({}, document.title, window.location.pathname);
+      
+      const { data: { session } } = await supabaseClient.auth.getSession();
+      if (!session) {
+        console.log('[INDEX] ❌ Pas de session après callback');
+        return false;
+      }
+      
+      console.log('[INDEX] ✅ Session OAuth:', session.user.email);
+      const firstName = session.user.user_metadata?.full_name?.split(' ')[0] || session.user.user_metadata?.name?.split(' ')[0] || session.user.email?.split('@')[0] || 'toi';
+      
+      showLoggedInNav(session.user);
+      showWelcome(firstName);
+      
+      try {
+        const { error } = await supabaseClient.from('profiles').select('id').eq('id', session.user.id).single();
+        if (error && error.code === 'PGRST116') {
+          await supabaseClient.from('profiles').insert({
+            id: session.user.id,
+            email: session.user.email,
+            name: session.user.user_metadata.full_name || session.user.email.split('@')[0],
+            plan: 'free'
+          });
+        }
+      } catch (e) { console.log('[INDEX] Profil déjà existant'); }
+      
+      setTimeout(() => { window.location.href = 'modules/compta/setup/'; }, 2000);
+      return true;
+    }
+
+    async function checkSession() {
+      console.log('[INDEX] 🔍 Vérification session...');
+      try {
+        const { data: { session } } = await supabaseClient.auth.getSession();
+        if (session) {
+          console.log('[INDEX] ✅ Connecté:', session.user.email);
+          showLoggedInNav(session.user);
+        } else {
+          console.log('[INDEX] ❌ Non connecté');
+          showLoggedOutNav();
+        }
+      } catch (e) {
+        console.log('[INDEX] ⚠️ Erreur session:', e);
+        showLoggedOutNav();
+      }
+    }
+
+    function runDemo() {
+      const container = document.getElementById('telegram-messages');
+      const glideLogo = document.getElementById('glide-logo');
+      const empty1 = document.getElementById('empty-1');
+      const empty2 = document.getElementById('empty-2');
+      if (!container) return;
+      
+      container.innerHTML = '';
+      glideLogo?.classList.remove('animate');
+      if (empty1) empty1.innerHTML = '<td style="color:rgba(255,255,255,0.2)">-</td><td style="color:rgba(255,255,255,0.2)">-</td><td style="color:rgba(255,255,255,0.2)">-</td>';
+      if (empty2) empty2.innerHTML = '<td style="color:rgba(255,255,255,0.2)">-</td><td style="color:rgba(255,255,255,0.2)">-</td><td style="color:rgba(255,255,255,0.2)">-</td>';
+      
+      setTimeout(() => {
+        const msg1 = document.createElement('div');
+        msg1.className = 'msg msg-user';
+        msg1.textContent = 'cb 1200 esp 350';
+        container.appendChild(msg1);
+        setTimeout(() => msg1.classList.add('show'), 50);
+      }, 500);
+      
+      setTimeout(() => glideLogo?.classList.add('animate'), 1500);
+      
+      setTimeout(() => {
+        const msg2 = document.createElement('div');
+        msg2.className = 'msg msg-bot';
+        msg2.innerHTML = '✅ Noté !<br>CB: 1 200€<br>Espèces: 350€';
+        container.appendChild(msg2);
+        setTimeout(() => msg2.classList.add('show'), 50);
+      }, 2500);
+      
+      setTimeout(() => {
+        if (empty1) empty1.innerHTML = '<td>09/01</td><td>CB</td><td class="amount">1 200</td>';
+        setTimeout(() => {
+          if (empty2) empty2.innerHTML = '<td>09/01</td><td>ESP</td><td class="amount">350</td>';
+        }, 300);
+      }, 2800);
+    }
+
+    async function launchRobot() {
+      try {
+        const { data: { session } } = await supabaseClient.auth.getSession();
+        if (session) {
+          window.location.href = 'modules/compta/setup/';
+        } else {
+          openModal('login');
+        }
+      } catch (e) {
+        openModal('login');
+      }
+    }
+
+    function openModal(tab = 'login') {
+      document.getElementById('modal-backdrop').classList.add('active');
+      document.getElementById('modal-content').classList.add('active');
+      document.body.style.overflow = 'hidden';
+      switchTab(tab);
+    }
+
+    function closeModal() {
+      document.getElementById('modal-backdrop').classList.remove('active');
+      document.getElementById('modal-content').classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+    function switchTab(tab) {
+      document.getElementById('login-form').style.display = tab === 'login' ? 'block' : 'none';
+      document.getElementById('register-form').style.display = tab === 'register' ? 'block' : 'none';
+      document.getElementById('tab-login').classList.toggle('active', tab === 'login');
+      document.getElementById('tab-register').classList.toggle('active', tab === 'register');
+      document.getElementById('tab-indicator').classList.toggle('slide-right', tab === 'register');
+    }
+
+    async function handleGoogleAuth() {
+      console.log('[INDEX] 🚀 Google OAuth...');
+      closeModal();
+      try {
+        const { error } = await supabaseClient.auth.signInWithOAuth({
+          provider: 'google',
+          options: { redirectTo: window.location.origin + '/auth/callback.html' }
+        });
+        if (error) throw error;
+      } catch (error) {
+        alert('Erreur: ' + error.message);
+      }
+    }
+
+    async function handleLogin(e) {
+      e.preventDefault();
+      const btn = document.getElementById('login-btn');
+      const err = document.getElementById('login-error');
+      err.classList.remove('show');
+      btn.textContent = 'Connexion...';
+      btn.disabled = true;
+      try {
+        const { data, error } = await supabaseClient.auth.signInWithPassword({
+          email: document.getElementById('login-email').value.trim(),
+          password: document.getElementById('login-password').value
+        });
+        if (error) throw error;
+        closeModal();
+        showLoggedInNav(data.user);
+        showWelcome(data.user?.user_metadata?.name?.split(' ')[0] || 'toi');
+        setTimeout(() => { window.location.href = 'modules/compta/setup/'; }, 2000);
+      } catch (error) {
+        err.textContent = error.message === 'Invalid login credentials' ? 'Email ou mot de passe incorrect' : error.message;
+        err.classList.add('show');
+        btn.textContent = 'Se connecter';
+        btn.disabled = false;
+      }
+    }
+
+    async function handleRegister(e) {
+      e.preventDefault();
+      const btn = document.getElementById('register-btn');
+      const err = document.getElementById('register-error');
+      err.classList.remove('show');
+      btn.textContent = 'Création...';
+      btn.disabled = true;
+      try {
+        const name = document.getElementById('register-name').value.trim();
+        const { data, error } = await supabaseClient.auth.signUp({
+          email: document.getElementById('register-email').value.trim(),
+          password: document.getElementById('register-password').value,
+          options: { data: { name, full_name: name } }
+        });
+        if (error) throw error;
+        closeModal();
+        showWelcome(name.split(' ')[0]);
+        setTimeout(() => { window.location.href = 'modules/compta/setup/'; }, 2000);
+      } catch (error) {
+        err.textContent = error.message === 'User already registered' ? 'Compte existant' : error.message;
+        err.classList.add('show');
+        btn.textContent = 'Créer mon compte';
+        btn.disabled = false;
+      }
+    }
+
+    async function signOut() {
+      console.log('[INDEX] 👋 Déconnexion...');
+      try {
+        await supabaseClient.auth.signOut();
+      } catch (e) {}
+      showLoggedOutNav();
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      console.log('[INDEX] 📱 Page chargée');
+      setTimeout(runDemo, 1000);
+      setInterval(runDemo, 8000);
+      
+      const wasCallback = await handleOAuthCallback();
+      if (!wasCallback) {
+        await checkSession();
+      }
+    });
+  </script>
+  <script src="js/analytics.js"></script>
+</body>
+</html>

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Politique de Confidentialite - iArmy</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23FF6B35'/><text x='50' y='68' font-family='Arial' font-size='55' font-weight='bold' fill='white' text-anchor='middle'>i</text></svg>">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Inter', sans-serif; margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #030303; color: white; min-height: 100vh; overflow-x: hidden; }
+    .bg-gradient-animate { background: linear-gradient(135deg, #030303 0%, #0a0508 25%, #050808 50%, #080805 75%, #030303 100%); background-size: 400% 400%; animation: gradientShift 20s ease infinite; }
+    @keyframes gradientShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+
+    .orb { position: fixed; border-radius: 50%; filter: blur(100px); animation: float 15s ease-in-out infinite; pointer-events: none; z-index: 0; }
+    .orb-1 { width: 500px; height: 500px; background: linear-gradient(135deg, #FF6B35, #FF8B5E); top: -250px; right: -150px; opacity: 0.15; }
+    .orb-2 { width: 400px; height: 400px; background: linear-gradient(135deg, #6B35FF, #8B5EFF); bottom: -200px; left: -150px; opacity: 0.12; animation-delay: -7s; }
+    @keyframes float { 0%, 100% { transform: translate(0, 0) scale(1); } 33% { transform: translate(30px, -30px) scale(1.05); } 66% { transform: translate(-20px, 20px) scale(0.95); } }
+
+    .glass { background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.05); }
+    .logo-i { width: 40px; height: 40px; background: linear-gradient(135deg, #FF6B35 0%, #FF8B5E 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 20px; transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); cursor: pointer; }
+    .logo-i:hover { transform: scale(1.2) rotate(-15deg); box-shadow: 0 12px 40px rgba(255,107,53,0.6); }
+
+    .nav-user-section { display: flex; align-items: center; gap: 12px; }
+    .nav-profile { display: flex; align-items: center; gap: 10px; padding: 8px 16px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; text-decoration: none; color: white; font-weight: 500; }
+    .nav-profile:hover { background: rgba(255,255,255,0.08); }
+    .nav-avatar { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; border: 2px solid rgba(255,107,53,0.3); }
+    .btn-logout { background: none; border: none; padding: 6px; cursor: pointer; color: rgba(255,255,255,0.3); transition: all 0.2s; display: flex; align-items: center; border-radius: 6px; }
+    .btn-logout:hover { background: rgba(239,68,68,0.1); color: #ef4444; }
+    .btn-login { padding: 10px 20px; background: linear-gradient(135deg, #FF6B35, #FF8B5E); border: none; border-radius: 10px; color: white; font-weight: 600; font-size: 14px; cursor: pointer; transition: all 0.3s; text-decoration: none; }
+    .btn-login:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(255,107,53,0.4); }
+
+    .page-container { max-width: 800px; margin: 0 auto; padding: 100px 20px 40px; position: relative; z-index: 10; }
+
+    .content-card { background: rgba(255,255,255,0.03); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.06); border-radius: 24px; padding: 40px; }
+
+    h1 { font-size: 28px; font-weight: 700; margin-bottom: 8px; background: linear-gradient(135deg, #FF6B35, #FF8B5E); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .subtitle { font-size: 14px; color: rgba(255,255,255,0.5); margin-bottom: 32px; }
+
+    h2 { font-size: 18px; font-weight: 600; margin-top: 32px; margin-bottom: 16px; color: #FF8B5E; }
+    h2:first-of-type { margin-top: 0; }
+
+    p, li { font-size: 14px; line-height: 1.7; color: rgba(255,255,255,0.7); margin-bottom: 12px; }
+
+    ul { padding-left: 20px; margin-bottom: 16px; }
+    li { margin-bottom: 8px; }
+
+    a { color: #FF6B35; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .highlight { background: rgba(255,107,53,0.1); border-left: 3px solid #FF6B35; padding: 16px 20px; border-radius: 0 12px 12px 0; margin: 20px 0; }
+    .highlight p { margin-bottom: 0; }
+
+    footer a { color: rgba(255,255,255,0.4); text-decoration: none; transition: color 0.2s; }
+    footer a:hover { color: #FF8B5E; }
+  </style>
+</head>
+<body class="bg-gradient-animate">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+
+  <nav class="glass" style="position: fixed; top: 0; left: 0; right: 0; z-index: 50;">
+    <div style="max-width: 800px; margin: 0 auto; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between;">
+      <a href="../" style="display: flex; align-items: center; gap: 12px; text-decoration: none; color: white;">
+        <div class="logo-i">i</div>
+        <span style="font-weight: 600; font-size: 18px;">iArmy</span>
+      </a>
+      <div id="auth-buttons"></div>
+    </div>
+  </nav>
+
+  <div class="page-container">
+    <div class="content-card">
+      <h1>Politique de Confidentialite</h1>
+      <p class="subtitle">Derniere mise a jour : Janvier 2026</p>
+
+      <h2>1. Introduction</h2>
+      <p>iArmy ("nous", "notre") est un service d'automatisation concu pour vous simplifier la vie en connectant vos differents outils (Telegram, Google Sheets, etc.). Cette politique explique comment nous traitons vos donnees.</p>
+
+      <div class="highlight">
+        <p><strong>Principe cle :</strong> iArmy est un intermediaire qui facilite la communication entre vos services. Nous transmettons vos donnees d'un point A a un point B, sans les stocker. Vos donnees restent dans VOS comptes (Google Drive, Telegram) - nous ne faisons que les faire circuler pour vous.</p>
+      </div>
+
+      <h2>2. Ce que nous collectons</h2>
+      <p>Pour faire fonctionner le service, nous avons besoin de :</p>
+      <ul>
+        <li><strong>Identification</strong> : Votre email et nom (via Google OAuth)</li>
+        <li><strong>Tokens d'acces</strong> : Pour communiquer avec Google Sheets et Telegram en votre nom</li>
+        <li><strong>Configuration</strong> : Vos preferences de modules et notifications</li>
+      </ul>
+      <p>Les donnees que vous envoyez (chiffres, montants, etc.) transitent par nos serveurs mais sont directement ecrites dans votre Google Sheets. Nous ne les conservons pas.</p>
+
+      <h2>3. Ce que nous ne faisons PAS</h2>
+      <ul>
+        <li>Nous ne stockons pas vos donnees metier de maniere permanente</li>
+        <li>Nous ne vendons jamais vos donnees</li>
+        <li>Nous n'utilisons pas vos donnees a des fins publicitaires</li>
+        <li>Nous ne partageons pas vos donnees avec des tiers non essentiels</li>
+      </ul>
+
+      <h2>4. Securite</h2>
+      <ul>
+        <li><strong>Chiffrement</strong> : Les tokens d'acces sont chiffres (AES-256-GCM)</li>
+        <li><strong>Acces restreint</strong> : Chaque utilisateur n'accede qu'a ses propres donnees</li>
+        <li><strong>Hebergement UE</strong> : Nos serveurs sont dans l'Union Europeenne</li>
+      </ul>
+
+      <h2>5. Services tiers</h2>
+      <p>Pour fonctionner, iArmy communique avec :</p>
+      <ul>
+        <li><strong>Google</strong> : Authentification et acces a vos Google Sheets</li>
+        <li><strong>Telegram</strong> : Envoi et reception de messages via le bot</li>
+        <li><strong>Hebergeur</strong> : Infrastructure securisee dans l'Union Europeenne</li>
+      </ul>
+
+      <h2>6. Vos droits (RGPD)</h2>
+      <p>Vous pouvez a tout moment :</p>
+      <ul>
+        <li><strong>Acceder</strong> a vos donnees</li>
+        <li><strong>Rectifier</strong> vos informations</li>
+        <li><strong>Supprimer</strong> votre compte et toutes les donnees associees</li>
+        <li><strong>Exporter</strong> vos donnees</li>
+      </ul>
+      <p>Pour exercer ces droits : <a href="mailto:support@iarmy.fr">support@iarmy.fr</a></p>
+
+      <h2>7. Conservation</h2>
+      <ul>
+        <li><strong>Donnees de compte</strong> : Conservees tant que le compte est actif</li>
+        <li><strong>Vos donnees metier</strong> : Stockees dans votre Google Sheets (vous en etes proprietaire)</li>
+        <li><strong>Logs techniques</strong> : 90 jours maximum</li>
+      </ul>
+      <p>Apres suppression du compte, toutes vos donnees sont effacees sous 30 jours.</p>
+
+      <h2>8. Avertissement</h2>
+      <p>iArmy est un outil d'automatisation et de transmission de donnees. Nous ne fournissons aucun conseil financier, comptable ou juridique. Pour toute question relative a votre comptabilite, consultez un professionnel agree.</p>
+
+      <h2>9. Modifications</h2>
+      <p>Cette politique peut etre mise a jour. En cas de changement important, nous vous informerons par email ou via Telegram.</p>
+
+      <h2>10. Contact</h2>
+      <p>Pour toute question : <a href="mailto:support@iarmy.fr">support@iarmy.fr</a></p>
+    </div>
+  </div>
+
+  <footer style="padding: 32px 20px; background: rgba(0,0,0,0.3); border-top: 1px solid rgba(255,255,255,0.05); margin-top: 32px;">
+    <div style="display: flex; justify-content: center; gap: 24px; font-size: 14px;">
+      <a href="../">Accueil</a>
+      <a href="../compte/">Compte</a>
+      <a href="./">Confidentialite</a>
+      <a href="../cgu/">CGU</a>
+      <a href="mailto:support@iarmy.fr">Contact</a>
+    </div>
+    <p style="color: rgba(255,255,255,0.25); font-size: 12px; text-align: center; margin-top: 12px;">© 2026 iArmy</p>
+  </footer>
+
+  <script>
+    const SUPABASE_URL = 'https://byqfnpdcnifauhwgetcq.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ5cWZucGRjbmlmYXVod2dldGNxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc4ODY1MTIsImV4cCI6MjA4MzQ2MjUxMn0.1W2OaRb0sApMvrG_28AoV2zUFAzrptzpwbR1c65tOPo';
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    async function init() {
+      const { data: { session } } = await supabaseClient.auth.getSession();
+
+      if (session) {
+        const user = session.user;
+        const userName = user.user_metadata?.full_name || user.user_metadata?.name || user.email?.split('@')[0] || 'Utilisateur';
+        const userAvatar = user.user_metadata?.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(userName)}&background=FF6B35&color=fff`;
+        const firstName = userName.split(' ')[0];
+
+        document.getElementById('auth-buttons').innerHTML = `
+          <div class="nav-user-section">
+            <a href="../compte/" class="nav-profile">
+              <img src="${userAvatar}" class="nav-avatar">
+              <span>${firstName}</span>
+            </a>
+          </div>
+        `;
+      } else {
+        document.getElementById('auth-buttons').innerHTML = `
+          <a href="../" class="btn-login">Connexion</a>
+        `;
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+  <script src="../js/analytics.js"></script>
+</body>
+</html>
