@@ -2200,21 +2200,7 @@
     async function initComptaPage() {
       console.log('[COMPTA] Init');
       const { data: { session } } = await supabaseClient.auth.getSession();
-
-      // BETA MODE: Allow testing without auth
-      if (!session) {
-        console.log('[COMPTA] BETA MODE - No session, showing wizard anyway');
-        currentUser = { id: 'demo', email: 'demo@beta.iarmy.fr' };
-        userProvider = 'demo';
-        // Skip to wizard directly
-        document.querySelectorAll('.step-content').forEach(function(c) { c.classList.remove('active'); });
-        document.getElementById('step-start').classList.add('active');
-        updateSidebarStep(1);
-        setupUploadZone();
-        setupNewDropZone();
-        return;
-      }
-
+      if (!session) { window.location.href = '../../../'; return; }
       currentUser = session.user;
       userProvider = session.user.app_metadata?.provider || 'email';
       console.log('[COMPTA] Connecte:', currentUser.email);
