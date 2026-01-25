@@ -66,6 +66,8 @@
     .module-name { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
     .module-badge { font-size: 11px; padding: 4px 12px; background: rgba(34,197,94,0.15); color: #4ade80; border-radius: 12px; font-weight: 600; }
     .module-badge.inactive { background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.4); }
+    .module-badge.tester { background: rgba(168,85,247,0.15); color: #c084fc; }
+    .module-badge.trialing { background: rgba(59,130,246,0.15); color: #60a5fa; }
 
     .module-card.soon { background: rgba(255,255,255,0.02); border-color: rgba(255,255,255,0.06); opacity: 0.4; pointer-events: none; }
     .module-card.soon .module-anim { opacity: 0.3; }
@@ -204,30 +206,14 @@
       <!-- Abonnement Tab -->
       <div id="tab-abonnement" class="tab-content active">
         <!-- Modules -->
-        <div class="section-title">Modules actifs</div>
-        <div class="modules-grid">
-          <a href="../modules/compta/" class="module-card">
-            <div class="module-anim">
-              <div class="logo-tg">
-                <svg viewBox="0 0 240 240"><defs><linearGradient id="tg" x1="50%" y1="0%" x2="50%" y2="100%"><stop offset="0%" stop-color="#2AABEE"/><stop offset="100%" stop-color="#229ED9"/></linearGradient></defs><circle cx="120" cy="120" r="120" fill="url(#tg)"/><path fill="#fff" d="M81.229 128.772l14.237 39.406s1.78 3.687 3.686 3.687 30.255-29.492 30.255-29.492l31.525-60.89L81.737 118.6z"/><path fill="#d2e4ef" d="M100.106 138.878l-2.733 29.046s-1.144 8.9 7.754 0 17.415-15.763 17.415-15.763"/><path fill="#b5cfe4" d="M81.486 130.178l-17.8-5.467s-2.006-.808-1.366-2.671c.143-.42.522-.72 1.773-1.5 5.912-3.686 108.297-41.223 108.297-41.223s1.928-.6 3.277-.138c.897.306 1.377 1.152 1.377 1.152.118.58.138 1.368.138 2.14 0 .663-.06 1.41-.06 2.292-.469 8.312-14.237 90.178-14.237 90.178s-.803 3.262-3.686 3.372c-1.99.067-5.104-1.29-6.897-2.352-1.467-.874-27.523-17.598-37.06-25.67-.832-.704-1.68-2.026-.06-3.63 3.673-3.64 8.047-8.047 17.05-16.5 2.006-1.89 4.032-6.297-4.365-1.072l-23.27 15.555s-2.667 1.654-7.617.18z"/></svg>
-              </div>
-              <div class="pulse-dot"></div>
-              <div class="pulse-dot"></div>
-              <div class="pulse-dot"></div>
-              <div class="logo-sheet">
-                <svg viewBox="0 0 56 56"><defs><linearGradient id="sh" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#0f9d58"/><stop offset="100%" stop-color="#0a7e3e"/></linearGradient></defs><rect x="8" y="8" width="40" height="40" rx="6" fill="url(#sh)"/><line x1="12" y1="20" x2="44" y2="20" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/><line x1="12" y1="28" x2="44" y2="28" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/><line x1="12" y1="36" x2="44" y2="36" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/><line x1="22" y1="12" x2="22" y2="44" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/><line x1="34" y1="12" x2="34" y2="44" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/></svg>
-              </div>
-            </div>
-            <div class="module-name">Compta Express</div>
-            <span class="module-badge" id="compta-badge">Actif</span>
-          </a>
-          <div class="module-card soon">
-            <div class="module-anim">
-              <div style="font-size: 32px;">👥</div>
-            </div>
-            <div class="module-name">Personnel</div>
-            <span class="module-badge inactive">Bientot</span>
-          </div>
+        <div class="section-title">Mes modules</div>
+        <div class="modules-grid" id="modules-grid">
+          <!-- Modules will be loaded dynamically -->
+        </div>
+        <div id="no-modules" style="display: none; text-align: center; padding: 24px; color: rgba(255,255,255,0.4);">
+          <div style="font-size: 32px; margin-bottom: 12px;">📦</div>
+          <p>Aucun module actif</p>
+          <a href="../" style="color: #FF6B35; font-size: 14px; margin-top: 8px; display: inline-block;">Découvrir les modules →</a>
         </div>
 
         <!-- Subscription Info -->
@@ -235,34 +221,13 @@
           <div class="subscription-header">
             <div class="subscription-icon">💎</div>
             <div class="subscription-info">
-              <h3>Mon abonnement</h3>
-              <p>Gere ton forfait et ta facturation</p>
+              <h3>Mes abonnements</h3>
+              <p>Détails de tes modules actifs</p>
             </div>
           </div>
-          <div class="subscription-details">
-            <div class="subscription-row">
-              <span class="subscription-label">Statut</span>
-              <span id="subscription-status" class="status-badge">Chargement...</span>
-            </div>
-            <div class="subscription-row">
-              <span class="subscription-label">Module Compta</span>
-              <span class="subscription-value" id="compta-status">-</span>
-            </div>
-            <div class="subscription-row" id="next-billing-row" style="display: none;">
-              <span class="subscription-label">Prochaine facture</span>
-              <span class="subscription-value" id="next-billing">-</span>
-            </div>
-            <div class="subscription-row" id="trial-ends-row" style="display: none;">
-              <span class="subscription-label">Fin de l'essai</span>
-              <span class="subscription-value" id="trial-ends" style="color: #60a5fa;">-</span>
-            </div>
+          <div class="subscription-details" id="subscription-details">
+            <div style="text-align: center; padding: 12px; color: rgba(255,255,255,0.4);">Chargement...</div>
           </div>
-          <button class="btn-subscribe" id="btn-subscribe" onclick="startCheckout('compta')" style="display: none;">
-            S'abonner - 39€/mois
-          </button>
-          <p id="trial-note" style="display: none; margin-top: 12px; font-size: 12px; color: rgba(255,255,255,0.5); text-align: center;">
-            7 jours d'essai gratuit inclus
-          </p>
         </div>
       </div>
 
@@ -383,6 +348,32 @@
       setTimeout(() => toast.remove(), 4000);
     }
 
+    // Module definitions
+    const MODULE_DEFS = {
+      compta: {
+        name: 'Compta Express',
+        icon: `<div class="module-anim">
+          <div class="logo-tg"><svg viewBox="0 0 240 240"><defs><linearGradient id="tg" x1="50%" y1="0%" x2="50%" y2="100%"><stop offset="0%" stop-color="#2AABEE"/><stop offset="100%" stop-color="#229ED9"/></linearGradient></defs><circle cx="120" cy="120" r="120" fill="url(#tg)"/><path fill="#fff" d="M81.229 128.772l14.237 39.406s1.78 3.687 3.686 3.687 30.255-29.492 30.255-29.492l31.525-60.89L81.737 118.6z"/><path fill="#d2e4ef" d="M100.106 138.878l-2.733 29.046s-1.144 8.9 7.754 0 17.415-15.763 17.415-15.763"/><path fill="#b5cfe4" d="M81.486 130.178l-17.8-5.467s-2.006-.808-1.366-2.671c.143-.42.522-.72 1.773-1.5 5.912-3.686 108.297-41.223 108.297-41.223s1.928-.6 3.277-.138c.897.306 1.377 1.152 1.377 1.152.118.58.138 1.368.138 2.14 0 .663-.06 1.41-.06 2.292-.469 8.312-14.237 90.178-14.237 90.178s-.803 3.262-3.686 3.372c-1.99.067-5.104-1.29-6.897-2.352-1.467-.874-27.523-17.598-37.06-25.67-.832-.704-1.68-2.026-.06-3.63 3.673-3.64 8.047-8.047 17.05-16.5 2.006-1.89 4.032-6.297-4.365-1.072l-23.27 15.555s-2.667 1.654-7.617.18z"/></svg></div>
+          <div class="pulse-dot"></div><div class="pulse-dot"></div><div class="pulse-dot"></div>
+          <div class="logo-sheet"><svg viewBox="0 0 56 56"><defs><linearGradient id="sh" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#0f9d58"/><stop offset="100%" stop-color="#0a7e3e"/></linearGradient></defs><rect x="8" y="8" width="40" height="40" rx="6" fill="url(#sh)"/><line x1="12" y1="20" x2="44" y2="20" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/><line x1="12" y1="28" x2="44" y2="28" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/><line x1="12" y1="36" x2="44" y2="36" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/><line x1="22" y1="12" x2="22" y2="44" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/><line x1="34" y1="12" x2="34" y2="44" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/></svg></div>
+        </div>`,
+        link: 'https://app.iarmy.fr/compta/',
+        price: '29€/mois'
+      },
+      planning: {
+        name: 'Planning',
+        icon: `<div class="module-anim"><div style="font-size: 32px;">📅</div></div>`,
+        link: 'https://app.iarmy.fr/planning/',
+        price: '39€/mois'
+      },
+      stock: {
+        name: 'Stock',
+        icon: `<div class="module-anim"><div style="font-size: 32px;">🍸</div></div>`,
+        link: 'https://app.iarmy.fr/stock/',
+        price: '29€/mois'
+      }
+    };
+
     async function init() {
       checkUrlParams();
 
@@ -411,9 +402,60 @@
         </div>
       `;
 
+      await loadUserModules(user.id);
       await loadModuleData(user.id);
       await loadSubscriptionData(user.id);
       initProfileEdit(user);
+    }
+
+    async function loadUserModules(userId) {
+      try {
+        // Charger tous les abonnements actifs de l'utilisateur
+        const { data: subscriptions } = await supabaseClient
+          .from('subscriptions')
+          .select('module_name, status, is_tester')
+          .eq('user_id', userId);
+
+        const grid = document.getElementById('modules-grid');
+        const noModules = document.getElementById('no-modules');
+
+        // Filtrer les abonnements actifs (status active, trialing ou is_tester)
+        const activeModules = (subscriptions || []).filter(sub =>
+          sub.status === 'active' || sub.status === 'trialing' || sub.is_tester === true
+        );
+
+        if (activeModules.length === 0) {
+          grid.style.display = 'none';
+          noModules.style.display = 'block';
+          return;
+        }
+
+        grid.innerHTML = activeModules.map(sub => {
+          const mod = MODULE_DEFS[sub.module_name];
+          if (!mod) return '';
+
+          let badgeClass = 'module-badge';
+          let badgeText = 'Actif';
+          if (sub.is_tester) {
+            badgeText = 'Testeur';
+            badgeClass = 'module-badge tester';
+          } else if (sub.status === 'trialing') {
+            badgeText = 'Essai';
+            badgeClass = 'module-badge trialing';
+          }
+
+          return `
+            <a href="${mod.link}" class="module-card">
+              ${mod.icon}
+              <div class="module-name">${mod.name}</div>
+              <span class="${badgeClass}">${badgeText}</span>
+            </a>
+          `;
+        }).join('');
+
+      } catch (err) {
+        console.error('Error loading modules:', err);
+      }
     }
 
     let currentUserId = null;
@@ -421,78 +463,64 @@
 
     async function loadSubscriptionData(userId) {
       try {
-        const { data: subscription } = await supabaseClient
+        const { data: subscriptions } = await supabaseClient
           .from('subscriptions')
           .select('*')
-          .eq('user_id', userId)
-          .eq('module_name', 'compta')
-          .maybeSingle();
+          .eq('user_id', userId);
 
-        const statusEl = document.getElementById('subscription-status');
-        const comptaStatusEl = document.getElementById('compta-status');
-        const btnSubscribe = document.getElementById('btn-subscribe');
-        const trialNote = document.getElementById('trial-note');
-        const nextBillingRow = document.getElementById('next-billing-row');
-        const trialEndsRow = document.getElementById('trial-ends-row');
+        const detailsEl = document.getElementById('subscription-details');
 
-        if (!subscription) {
-          // Pas d'abonnement
-          statusEl.textContent = 'Aucun abonnement';
-          statusEl.className = 'status-badge';
-          comptaStatusEl.textContent = 'Non abonne';
-          comptaStatusEl.style.color = 'rgba(255,255,255,0.4)';
-          btnSubscribe.style.display = 'block';
-          trialNote.style.display = 'block';
-        } else if (subscription.is_tester) {
-          // Testeur
-          statusEl.textContent = 'Testeur';
-          statusEl.className = 'status-badge tester';
-          comptaStatusEl.textContent = 'Acces illimite';
-          comptaStatusEl.style.color = '#c084fc';
-        } else if (subscription.status === 'trialing') {
-          // En essai
-          statusEl.textContent = 'Essai gratuit';
-          statusEl.className = 'status-badge trialing';
-          comptaStatusEl.textContent = 'Actif';
-          comptaStatusEl.style.color = '#4ade80';
-          if (subscription.trial_ends_at) {
-            trialEndsRow.style.display = 'flex';
-            document.getElementById('trial-ends').textContent = formatDate(subscription.trial_ends_at);
-          }
-        } else if (subscription.status === 'active') {
-          // Actif
-          statusEl.textContent = 'Actif';
-          statusEl.className = 'status-badge active';
-          comptaStatusEl.textContent = '39€/mois';
-          comptaStatusEl.style.color = '#4ade80';
-          if (subscription.current_period_end) {
-            nextBillingRow.style.display = 'flex';
-            document.getElementById('next-billing').textContent = formatDate(subscription.current_period_end);
-          }
-        } else if (subscription.status === 'canceled') {
-          // Annule
-          statusEl.textContent = 'Annule';
-          statusEl.className = 'status-badge canceled';
-          if (subscription.current_period_end && new Date(subscription.current_period_end) > new Date()) {
-            comptaStatusEl.textContent = 'Actif jusqu\'au ' + formatDate(subscription.current_period_end);
-            comptaStatusEl.style.color = '#fbbf24';
-          } else {
-            comptaStatusEl.textContent = 'Expire';
-            comptaStatusEl.style.color = 'rgba(255,255,255,0.4)';
-            btnSubscribe.style.display = 'block';
-            trialNote.style.display = 'none';
-            btnSubscribe.textContent = 'Se reabonner - 39€/mois';
-          }
-        } else if (subscription.status === 'past_due') {
-          // Paiement en retard
-          statusEl.textContent = 'Paiement en retard';
-          statusEl.className = 'status-badge past_due';
-          comptaStatusEl.textContent = 'A regulariser';
-          comptaStatusEl.style.color = '#fbbf24';
+        // Filtrer les abonnements actifs
+        const activeSubscriptions = (subscriptions || []).filter(sub =>
+          sub.status === 'active' || sub.status === 'trialing' || sub.is_tester === true
+        );
+
+        if (activeSubscriptions.length === 0) {
+          detailsEl.innerHTML = `
+            <div style="text-align: center; padding: 16px; color: rgba(255,255,255,0.4);">
+              <p>Aucun abonnement actif</p>
+              <a href="../" style="color: #FF6B35; font-size: 14px;">Découvrir les modules →</a>
+            </div>
+          `;
+          return;
         }
+
+        detailsEl.innerHTML = activeSubscriptions.map(sub => {
+          const mod = MODULE_DEFS[sub.module_name];
+          if (!mod) return '';
+
+          let statusText = '';
+          let statusColor = '#4ade80';
+          let extraInfo = '';
+
+          if (sub.is_tester) {
+            statusText = 'Testeur';
+            statusColor = '#c084fc';
+          } else if (sub.status === 'trialing') {
+            statusText = 'Essai';
+            statusColor = '#60a5fa';
+            if (sub.trial_ends_at || sub.expires_at) {
+              extraInfo = `<div class="subscription-row"><span class="subscription-label">Fin essai</span><span class="subscription-value" style="color: #60a5fa;">${formatDate(sub.trial_ends_at || sub.expires_at)}</span></div>`;
+            }
+          } else if (sub.status === 'active') {
+            statusText = mod.price;
+            if (sub.current_period_end) {
+              extraInfo = `<div class="subscription-row"><span class="subscription-label">Renouvellement</span><span class="subscription-value">${formatDate(sub.current_period_end)}</span></div>`;
+            }
+          }
+
+          return `
+            <div class="subscription-row">
+              <span class="subscription-label">${mod.name}</span>
+              <span class="subscription-value" style="color: ${statusColor};">${statusText}</span>
+            </div>
+            ${extraInfo}
+          `;
+        }).join('');
+
       } catch (err) {
         console.error('Error loading subscription:', err);
-        document.getElementById('subscription-status').textContent = 'Erreur';
+        document.getElementById('subscription-details').innerHTML = '<div style="color: rgba(255,255,255,0.4); text-align: center; padding: 12px;">Erreur de chargement</div>';
       }
     }
 
@@ -537,7 +565,7 @@
     async function loadModuleData(userId) {
       currentUserId = userId;
       try {
-        const { data: config } = await supabaseClient.from('module_configs').select('sheet_id, config').eq('user_id', userId).eq('module_name', 'compta').single();
+        const { data: config } = await supabaseClient.from('module_configs').select('sheet_id, config').eq('user_id', userId).eq('module_name', 'compta').maybeSingle();
         const { data: telegramLink } = await supabaseClient.from('telegram_links').select('telegram_user_id').eq('user_id', userId).maybeSingle();
 
         const hasTelegram = !!telegramLink?.telegram_user_id;
@@ -554,9 +582,6 @@
           document.getElementById('sheet-conn').classList.add('active');
           document.getElementById('sheet-conn').style.cursor = 'pointer';
           document.getElementById('sheet-conn').onclick = () => window.open('https://docs.google.com/spreadsheets/d/' + config.sheet_id + '/edit', '_blank');
-        } else {
-          document.getElementById('compta-badge').textContent = 'A configurer';
-          document.getElementById('compta-badge').className = 'module-badge inactive';
         }
       } catch (err) { console.log('No config'); }
     }
