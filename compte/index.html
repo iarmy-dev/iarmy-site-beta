@@ -249,26 +249,6 @@
           </div>
         </div>
 
-        <!-- Connexions -->
-        <div class="section-title">Connexions</div>
-        <div class="info-row">
-          <div class="info-box active">
-            <span class="info-icon">🔗</span>
-            <span class="info-label">Google</span>
-            <span class="info-status">✓</span>
-          </div>
-          <div class="info-box" id="telegram-conn">
-            <span class="info-icon">📱</span>
-            <span class="info-label">Telegram</span>
-            <span class="info-status pending" id="telegram-status">-</span>
-          </div>
-          <div class="info-box" id="sheet-conn">
-            <span class="info-icon">📊</span>
-            <span class="info-label">Sheets</span>
-            <span class="info-status pending" id="sheet-status">-</span>
-          </div>
-        </div>
-
         <!-- Danger Zone -->
         <div class="section-title" style="margin-top: 28px; color: rgba(239,68,68,0.6);">Zone danger</div>
         <div class="danger-card">
@@ -564,26 +544,7 @@
 
     async function loadModuleData(userId) {
       currentUserId = userId;
-      try {
-        const { data: config } = await supabaseClient.from('module_configs').select('sheet_id, config').eq('user_id', userId).eq('module_name', 'compta').maybeSingle();
-        const { data: telegramLink } = await supabaseClient.from('telegram_links').select('telegram_user_id').eq('user_id', userId).maybeSingle();
-
-        const hasTelegram = !!telegramLink?.telegram_user_id;
-
-        if (hasTelegram) {
-          document.getElementById('telegram-status').textContent = '✓';
-          document.getElementById('telegram-status').className = 'info-status';
-          document.getElementById('telegram-conn').classList.add('active');
-        }
-
-        if (config?.sheet_id) {
-          document.getElementById('sheet-status').textContent = '✓';
-          document.getElementById('sheet-status').className = 'info-status';
-          document.getElementById('sheet-conn').classList.add('active');
-          document.getElementById('sheet-conn').style.cursor = 'pointer';
-          document.getElementById('sheet-conn').onclick = () => window.open('https://docs.google.com/spreadsheets/d/' + config.sheet_id + '/edit', '_blank');
-        }
-      } catch (err) { console.log('No config'); }
+      // Connexions are now handled per-module, not in compte page
     }
 
     async function signOut() {
