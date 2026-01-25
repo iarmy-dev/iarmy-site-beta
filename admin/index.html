@@ -497,13 +497,17 @@
       showToast('Donnees actualisees');
     }
 
+    const ALL_MODULES = ['compta', 'planning', 'stock'];
+
     function renderUsersRows(users) {
       if (users.length === 0) {
         return '<tr><td colspan="5" style="text-align: center; color: rgba(255,255,255,0.4); padding: 40px;">Aucun utilisateur</td></tr>';
       }
 
       return users.map(u => {
-        const hasTester = u.subscriptions.some(s => s.is_tester);
+        const testerModules = u.subscriptions.filter(s => s.is_tester).map(s => s.module_name);
+        const hasTester = testerModules.length > 0;
+
         const subBadges = u.subscriptions.map(s => {
           let cls = 'none';
           if (s.is_tester) cls = 'tester';
@@ -518,6 +522,14 @@
         const displayName = u.full_name || u.email?.split('@')[0] || 'Utilisateur';
         const avatarUrl = u.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=FF6B35&color=fff&size=36`;
         const testerBadge = hasTester ? '<span class="tester-badge">TESTEUR</span>' : '';
+
+        // Boutons testeur par module
+        const testerButtons = ALL_MODULES.map(mod => {
+          const isTester = testerModules.includes(mod);
+          return `<button class="btn-action btn-tester ${isTester ? 'active' : ''}" onclick="toggleTester('${u.user_id}', '${mod}', ${!isTester})" title="${mod}">
+            ${isTester ? '✓' : '+'} ${mod.charAt(0).toUpperCase()}
+          </button>`;
+        }).join('');
 
         return `
           <tr class="${hasTester ? 'row-tester' : ''}">
@@ -534,9 +546,9 @@
             <td><div class="module-badges">${subBadges}</div></td>
             <td>${u.telegram ? 'Oui' : 'Non'}</td>
             <td class="actions-cell">
-              <button class="btn-action btn-tester ${hasTester ? 'active' : ''}" onclick="toggleTester('${u.user_id}', 'compta', ${!hasTester})">
-                ${hasTester ? 'Retirer' : '+ Testeur'}
-              </button>
+              <div style="display: flex; gap: 4px; flex-wrap: wrap;">
+                ${testerButtons}
+              </div>
               <button class="btn-action btn-reset" onclick="resetUserData('${u.user_id}', '${u.email || 'cet utilisateur'}')" title="Effacer les données">
                 Reset
               </button>
@@ -561,6 +573,11 @@
 
     async function toggleTester(userId, moduleName, setTester) {
       try {
+        // Trouver l'email de l'utilisateur
+        const targetUser = allUsers.find(u => u.user_id === userId);
+        const userEmail = targetUser?.email;
+        const userName = targetUser?.full_name;
+
         const { data: existing, error: selectError } = await supabaseClient
           .from('subscriptions')
           .select('id')
@@ -601,7 +618,32 @@
           }
         }
 
-        showToast(setTester ? 'Testeur ajoute !' : 'Testeur retire');
+        // Envoyer email de notification
+        if (userEmail) {
+          try {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            await fetch(`${SUPABASE_URL}/functions/v1/send-tester-email`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${session.access_token}`
+              },
+              body: JSON.stringify({
+                recipientEmail: userEmail,
+                recipientName: userName,
+                moduleName: moduleName,
+                action: setTester ? 'activated' : 'deactivated'
+              })
+            });
+            showToast(setTester ? `Testeur active + mail envoye a ${userEmail}` : `Testeur retire + mail envoye`);
+          } catch (emailErr) {
+            console.warn('Email error:', emailErr);
+            showToast(setTester ? 'Testeur ajoute (mail non envoye)' : 'Testeur retire (mail non envoye)');
+          }
+        } else {
+          showToast(setTester ? 'Testeur ajoute (pas d\'email)' : 'Testeur retire');
+        }
+
         await loadDashboard();
       } catch (err) {
         console.error('Toggle tester error:', err);
